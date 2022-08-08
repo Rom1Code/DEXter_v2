@@ -24,7 +24,9 @@ import {
   getEtherBalance,
   getLPTokensBalance,
   getReserveOfTokens,
-  getDexTokenBalance
+  getDexTokenBalance,
+  getEthinPool,
+  getTokeninPool,
 } from "../utils/getAmounts";
 import { swapTokens, getAmountOfTokensReceivedFromSwap } from "../utils/swap";
 import { createProposal, voteForProposal, fetchAllProposals, getNbProposal, executeProposal } from "../utils/dao";
@@ -32,7 +34,6 @@ import { progressBar, timeConverter } from "../utils/helper";
 
 
 import Dashboard from './Dashboard'
-import Gouvernance from './Gouvernance'
 
 export default function Home() {
 
@@ -62,9 +63,6 @@ export default function Home() {
   const [tokenToBeReceivedAfterSwap, settokenToBeReceivedAfterSwap] = useState(zero);
   const [ethSelected, setEthSelected] = useState(true);
 
-  const [listToken, setListToken] = useState("");
-  const [currentTokenContract, setCurrentTokenContract] = useState();
-
   const [listProposals, setListProposals] = useState([]);
   const [nbProposal, setNbProposal] = useState([0]);
   const [listHasVoted, setListHasVoted] = useState([]);
@@ -78,6 +76,7 @@ export default function Home() {
   const [listBalanceOfTokens, setListBalanceOfTokens] = useState([]);
   const [listLPToken, setListLPToken] = useState([]);
 
+  const [selectedSwapToken, setSelectedSwapToken] = useState();
   /**
     * getAmounts call various functions to retrive amounts for ethbalance,
     * LP tokens etc
@@ -131,7 +130,6 @@ export default function Home() {
         const provider = await getProviderOrSigner()
         const _nbPool = await getNbPool(provider);
         setNbPool(_nbPool)
-        console.log("_getNbPool",nbPool.toString())
         _fetchAllPools(nbPool.toString())
       } catch (err) {
         console.error(err);
@@ -146,6 +144,7 @@ export default function Home() {
         setListBalanceOfTokens(_listBalanceOfTokens)
         setListLPToken(_listLPToken)
         setOutputBalance(_listBalanceOfTokens[1])
+        setSelectedSwapToken(_listPools[0].tokenAddress)
         console.log("_fetchAllPools",_listPools)
       } catch (err) {
         console.error(err);
@@ -154,15 +153,12 @@ export default function Home() {
 
     const displayListToken = () => {
       return (
-      listPools.map((token, key) => {
+      listPools.map((pool, key) => {
         return (
-        <option value={token.tokenAddress}>{token.symbol}</option>)
+        <option value={pool.tokenAddress}>{pool.symbol}</option>)
     }
   ))
     }
-
-
-
 
     const _addLiquidity = async (poolId, tokenAddress) => {
       console.log("_add liquidity",tokenAddress)
@@ -244,10 +240,10 @@ export default function Home() {
   /**** SWAP FUNCTIONS ****/
 
 
-  const _swapTokens = async (selectObject) => {
-    var value = selectObject.value;
+  const _swapTokens = async () => {
+
    try {
-     const tokenAddress=LUCILE_TOKEN_ADDRESS;
+     const tokenAddress=selectedSwapToken;
      // Convert the amount entered by the user to a BigNumber using the `parseEther` library from `ethers.js`
      const swapAmountWei = utils.parseEther(swapAmount);
      // Check if the user entered zero
@@ -277,6 +273,7 @@ export default function Home() {
  };
 
   const _getAmountOfTokensReceivedFromSwap = async (_swapAmount) => {
+    console.log("selectedSwapToken",selectedSwapToken)
     try {
       // Convert the amount entered by the user to a BigNumber using the `parseEther` library from `ethers.js`
       const _swapAmountWEI = utils.parseEther(_swapAmount.toString());
@@ -285,14 +282,15 @@ export default function Home() {
       if (!_swapAmountWEI.eq(zero)) {
         const provider = await getProviderOrSigner();
         // Get the amount of ether in the contract
-        const _ethBalance = await getEtherBalance(provider, null, true);
+        const _ethReservedBalance = getEthinPool(listPools, selectedSwapToken)
+        const _tokenReservedBalance = getTokeninPool(listPools, selectedSwapToken)
         // Call the `getAmountOfTokensReceivedFromSwap` from the utils folder
         const amountOfTokens = await getAmountOfTokensReceivedFromSwap(
           _swapAmountWEI,
           provider,
           ethSelected,
-          _ethBalance,
-          reservedLucile
+          _ethReservedBalance,
+          _tokenReservedBalance
         );
         settokenToBeReceivedAfterSwap(amountOfTokens);
       } else {
@@ -556,6 +554,7 @@ export default function Home() {
     console.log("updateBalance",tokenAddress)
     const provider = await getProviderOrSigner(false);
     const balance = await getTokensBalance(provider, walletAddress, tokenAddress);
+    setSelectedSwapToken(tokenAddress);
     if(ethSelected){
       setOutputBalance(balance);
     }
@@ -574,6 +573,7 @@ export default function Home() {
       }
       else if(parseInt(nbPool) !=0) {
       return (
+        <center>
         <div>
             <div className={styles.swap}>
                 <div className="row text-white">
@@ -642,7 +642,7 @@ export default function Home() {
                   <center><button onClick={_swapTokens} className={styles.btn_swap}>SWAP!</button></center>
             </div>
         </div>
-
+        </center>
       );
     }
     else {

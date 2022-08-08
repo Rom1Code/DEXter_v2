@@ -100,3 +100,25 @@ export const getDexTokenBalance = async (provider, walletAddress) => {
     console.error(err);
   }
 };
+
+export const getEthinPool = (listPools, tokenAddress) => {
+  const balance = 0;
+  for(var i =0; i < listPools.length; i++) {
+    if(listPools[i].tokenAddress.toString() === tokenAddress){
+       balance = listPools[i].ethReservedBalance;
+    }
+  }
+  console.log(balance.toString())
+  return balance;
+}
+
+export const getTokeninPool = (listPools, tokenAddress) => {
+  const balance = 0;
+  for(var i =0; i < listPools.length; i++) {
+    if(listPools[i].tokenAddress.toString() === tokenAddress){
+      balance = listPools[i].tokenReservedBalance;
+    }
+  }
+  console.log(balance.toString())
+  return balance;
+}
