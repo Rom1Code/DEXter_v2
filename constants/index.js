@@ -1,5 +1,5 @@
 //export const EXCHANGE_CONTRACT_ADDRESS = "0x3445A7AA9ECe53e729246734aFdf67EE83eCe1AA";
-export const EXCHANGE_CONTRACT_ADDRESS = "0x748248A8CdEe21D69f48095cA12bA66Ef8E72eF8";
+export const EXCHANGE_CONTRACT_ADDRESS = "0xd94530288851010e6CFdFffA8aF0a43531E345B7";
 export const EXCHANGE_CONTRACT_ABI = [
   {
     "inputs": [],
@@ -492,6 +492,11 @@ export const EXCHANGE_CONTRACT_ABI = [
         "type": "uint256"
       },
       {
+        "internalType": "uint256",
+        "name": "lpBalance",
+        "type": "uint256"
+      },
+      {
         "internalType": "address",
         "name": "tokenAddress",
         "type": "address"
@@ -639,7 +644,7 @@ export const EXCHANGE_CONTRACT_ABI = [
 ];
 
 
-export const DAO_CONTRACT_ADDRESS = "0x84e69Ce1B42D53aB1B4a3D6221Fb3E4FB0855ceC";
+export const DAO_CONTRACT_ADDRESS = "0xBF44b63948C566e983ED54cA0da8F648d0Ff047E";
 export const DAO_CONTRACT_ABI = [
   {
     "inputs": [

@@ -101,17 +101,18 @@ export const getTokensAfterRemove = async (
   provider,
   removeLPTokenWei,
   _ethBalance,
-  tokenReserve
+  tokenReserve,
+  lpBalance,
 ) => {
-  try {
+  console.log("removeLPTokenWei",removeLPTokenWei.toString())
+  console.log("_ethBalance",_ethBalance.toString())
+  console.log("tokenReserve",tokenReserve.toString())
+  console.log("lpBalance",lpBalance.toString())
+
     // Create a new instance of the exchange contract
-    const exchangeContract = new Contract(
-      EXCHANGE_CONTRACT_ADDRESS,
-      EXCHANGE_CONTRACT_ABI,
-      provider
-    );
     // Get the total supply of `Crypto Dev` LP tokens
-    const _totalSupply = await exchangeContract.totalSupply();
+    const _totalSupply = lpBalance;
+
     // Here we are using the BigNumber methods of multiplication and division
     // The amount of Eth that would be sent back to the user after he withdraws the LP token
     // is calculated based on a ratio,
@@ -121,6 +122,7 @@ export const getTokensAfterRemove = async (
     // Ratio is -> (amount of CD tokens sent back to the user / CD Token reserve) = (LP tokens withdrawn) / (total supply of LP tokens)
     // Then (amount of CD tokens sent back to the user) = (CD token reserve * LP tokens withdrawn) / (total supply of LP tokens)
     const _removeEther = _ethBalance.mul(removeLPTokenWei).div(_totalSupply);
+    console.log("_removeEther",_removeEther.toString())
     const _removeCD = tokenReserve
       .mul(removeLPTokenWei)
       .div(_totalSupply);
@@ -128,9 +130,6 @@ export const getTokensAfterRemove = async (
       _removeEther,
       _removeCD,
     };
-  } catch (err) {
-    console.error(err);
-  }
 };
 
 export const getNbPool = async (provider) => {
@@ -145,11 +144,11 @@ export const getNbPool = async (provider) => {
 
 
 export const fetchAllPools = async (provider, nbPool, walletAddress) => {
-  console.log("fetchAllPools nb",nbPool)
   const exchangeContract = new Contract(
     EXCHANGE_CONTRACT_ADDRESS,
     EXCHANGE_CONTRACT_ABI,
     provider);
+  const listPoolsWithLP = [];
   const listPools = [];
   const listLPToken = []
   listLPToken.push(0)
@@ -157,10 +156,18 @@ export const fetchAllPools = async (provider, nbPool, walletAddress) => {
   balanceOfTokens.push(0)
 
   for(var i=1; i<=nbPool; i++){
+    //we save the pool with liquidity in listPools in order to display only
+    //token with liquidty for the swap
     const tempPool = await exchangeContract.pools(i)
     listPools.push(tempPool);
+
+    if(tempPool.tokenReservedBalance != 0) {
+    listPoolsWithLP.push(tempPool);
+    }
+    //we save the LP token for the pool in which the user add liquidity
     const tempLP = await exchangeContract.nbLPbyPool(i, walletAddress)
     listLPToken.push(tempLP)
+
     const tokenContract = new Contract(
       tempPool.tokenAddress,
       TOKEN_CONTRACT_ABI,
@@ -170,29 +177,5 @@ export const fetchAllPools = async (provider, nbPool, walletAddress) => {
     balanceOfTokens.push(tempBalance)
 
   }
-  return [listPools, balanceOfTokens, listLPToken] ;
+  return [listPools, balanceOfTokens, listLPToken, listPoolsWithLP] ;
 }
-
-export const getTokensBalanceV2 = async (provider, address, listPools) => {
-  console.log("getTokensBalanceV2",listPools )
-  console.log("lenght",listPools.length)
-  try {
-    const balanceOfTokens = []
-    balanceOfTokens.push(0)
-    for(var i=0; i<listPools.length; i++){
-      console.log("getTokensBalanceV2",listPools[i].tokenAddress )
-
-      const tokenContract = new Contract(
-        listPools[i].tokenAddress,
-        TOKEN_CONTRACT_ABI,
-        provider
-      );
-      const tempBalance = await tokenContract.balanceOf(address);
-      balanceOfTokens.push(tempBalance)
-    }
-
-    return balanceOfTokens;
-  } catch (err) {
-    console.error(err);
-  }
-};

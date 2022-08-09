@@ -71,6 +71,9 @@ export default function Home() {
   const [selectedDAOTab, setSelectedDAOTab] = useState("view");
 
   const [listPools, setListPools] = useState([]);
+  const [listPoolsWithLP, setListPoolsWithLP] = useState([]);
+  const [currentPoolCalcul, setCurrentPoolCalcul] = useState();
+
   const [nbPool, setNbPool] = useState([0]);
 
   const [listBalanceOfTokens, setListBalanceOfTokens] = useState([]);
@@ -137,15 +140,20 @@ export default function Home() {
     }
 
     const _fetchAllPools = async () => {
+      console.log("setSelectedSwapToken",selectedSwapToken)
       try{
         const provider = await getProviderOrSigner()
-        const [_listPools, _listBalanceOfTokens, _listLPToken]  = await fetchAllPools(provider, nbPool, walletAddress)
+        const [_listPools, _listBalanceOfTokens, _listLPToken, _listPoolsWithLP]  = await fetchAllPools(provider, nbPool, walletAddress)
         setListPools(_listPools)
         setListBalanceOfTokens(_listBalanceOfTokens)
         setListLPToken(_listLPToken)
-        setOutputBalance(_listBalanceOfTokens[1])
-        setSelectedSwapToken(_listPools[0].tokenAddress)
-        console.log("_fetchAllPools",_listPools)
+        setListPoolsWithLP(_listPoolsWithLP)
+
+        if(_listPoolsWithLP.length !=0) {
+          setSelectedSwapToken(_listPools[0].tokenAddress)
+          setOutputBalance(_listBalanceOfTokens[1])
+        }
+
       } catch (err) {
         console.error(err);
       }
@@ -153,7 +161,7 @@ export default function Home() {
 
     const displayListToken = () => {
       return (
-      listPools.map((pool, key) => {
+      listPoolsWithLP.map((pool, key) => {
         return (
         <option value={pool.tokenAddress}>{pool.symbol}</option>)
     }
@@ -161,9 +169,6 @@ export default function Home() {
     }
 
     const _addLiquidity = async (poolId, tokenAddress) => {
-      console.log("_add liquidity",tokenAddress)
-      console.log("_add liquidity",poolId.toString())
-
        try {
          // Convert the ether amount entered by the user to Bignumber
          const addEtherWei = utils.parseEther(addEther.toString());
@@ -209,8 +214,12 @@ export default function Home() {
     }
   };
 
-  const _getTokensAfterRemove = async (_removeLPTokens, _tokenAddress, _ethReservedBalance) => {
-    console.log("poolid eth",_ethReservedBalance)
+  const _getTokensAfterRemove = async (_removeLPTokens, _tokenAddress, _ethReservedBalance, _tokenReservedBalance, _lpBalance) => {
+    console.log("poolid eth",_ethReservedBalance.toString())
+    console.log("removeLPTokenWei",_removeLPTokens.toString())
+    console.log("_tokenAddress",_tokenAddress)
+    console.log("_lpbalance",_lpBalance.toString())
+
     try {
       const provider = await getProviderOrSigner();
       // Convert the LP tokens entered by the user to a BigNumber
@@ -218,13 +227,14 @@ export default function Home() {
       // Get the Eth reserves within the exchange contract
       const _ethBalance = _ethReservedBalance;
       // get the crypto dev token reserves from the contract
-      const tokenReserve = await getReserveOfTokens(provider, _tokenAddress);
+      const tokenReserve = _tokenReservedBalance;
       // call the getTokensAfterRemove from the utils folder
       const { _removeEther, _removeCD } = await getTokensAfterRemove(
         provider,
         removeLPTokenWei,
         _ethBalance,
-        tokenReserve
+        tokenReserve,
+        _lpBalance,
       );
       setRemoveEther(_removeEther);
       setRemoveCD(_removeCD);
@@ -273,7 +283,6 @@ export default function Home() {
  };
 
   const _getAmountOfTokensReceivedFromSwap = async (_swapAmount) => {
-    console.log("selectedSwapToken",selectedSwapToken)
     try {
       // Convert the amount entered by the user to a BigNumber using the `parseEther` library from `ethers.js`
       const _swapAmountWEI = utils.parseEther(_swapAmount.toString());
@@ -325,6 +334,7 @@ export default function Home() {
      setLoading(true);
      await createProposal(signer, proptitle, propDesc, propDeadline, propTokenAddress )
      await _getNbProposal()
+     await _fetchAllPools()
      setLoading(false);
    } catch (err) {
      console.error(err);
@@ -368,7 +378,12 @@ export default function Home() {
  const _executeProposal = async (_proposalId) => {
    try {
    const signer = await getProviderOrSigner(true);
+   setLoading(true);
    await executeProposal(signer, _proposalId)
+   await _getNbPool();
+   await _fetchAllPools();
+   setLoading(false);
+
  } catch (err) {
    console.error(err);
  }
@@ -439,7 +454,6 @@ export default function Home() {
  */
 
     const renderPool = () => {
-      console.log(listBalanceOfTokens)
       if(loading){
         return (
           <div className={styles.description}>
@@ -447,14 +461,19 @@ export default function Home() {
           </div>
         );
       }
-      else if(parseInt(nbPool) !=0) {
-        console.log("lp",listLPToken[0].toString())
+      else if (parseInt(nbPool) ==0)
+        return (
+          <div className={styles.description}>
+            There is no pool
+          </div>
+      );
+      else {
         return (
           <center>
           <div>
           {listPools.map((pool,key)=> (
 
-            <div className={styles.pool}>
+            <div key={key} className={styles.pool}>
                 <div>
                   <p className={styles.rate_pool}>Pool {pool.symbol}/ETH token </p>
                   <p className={styles.balance}>ETH : {utils.formatEther(ethBalance)}</p>
@@ -463,7 +482,7 @@ export default function Home() {
                   <p className={styles.balance}>Pool reserve {utils.formatEther(pool.tokenReservedBalance)} {pool.symbol}/{utils.formatEther(pool.ethReservedBalance)} ETH :</p>
 
                 </div>
-                  {pool.tokenReservedBalance==0 ? (
+                  {pool.lpBalance==0 ? (
                     <div >
                       <input
                         type="number"
@@ -497,7 +516,8 @@ export default function Home() {
                          pool.ethReservedBalance,
                          pool.tokenReservedBalance
                        );
-                       setAddTokens(_addCDTokens);}}
+                       setAddTokens(_addCDTokens);
+                       setCurrentPoolCalcul(pool.id)}}
                    className=""
                    required />
                    <br/>
@@ -505,7 +525,7 @@ export default function Home() {
                      type="number"
                      placeholder="Amount of Token"
                      className=""
-                     value={utils.formatEther(addTokens)}
+                     value={ currentPoolCalcul == pool.id.toString() ? utils.formatEther(addTokens) : "0"}
                      disabled />
                      <br/>
                    <button
@@ -514,24 +534,28 @@ export default function Home() {
                      className={styles.btn_stake}>
                        ADD</button>
                        <br/>
-                 <p className={styles.balance}>Balance of LP Token : {utils.formatEther(lpBalance)}</p>
+                       <br/>
                  <input
                    type="number"
                    placeholder="Amount of LP"
                    onChange={async (e) => {
                     setRemoveLPTokens(e.target.value || "0");
-                    await _getTokensAfterRemove(e.target.value, pool.tokenAddress, pool.ethReservedBalance || "0");
+                    await _getTokensAfterRemove(e.target.value, pool.tokenAddress, pool.ethReservedBalance, pool.tokenReservedBalance, pool.lpBalance || "0");
+                    setCurrentPoolCalcul(pool.id)
                   }}
                    className=""
                    required />
-                   <p> You will get {utils.formatEther(removeCD)} {pool.name} Tokens and {utils.formatEther(removeEther)} Eth</p>
+                    <br/>
                    <button
                      type="button"
                      className={styles.btn_unstake}
                      onClick={() =>{_removeLiquidity(pool.id, pool.tokenAddress)}}>
                        REMOVE
                      </button>
-
+                     {currentPoolCalcul == pool.id.toString() ? (
+                     <p> You will get {utils.formatEther(removeCD)} {pool.name} Tokens and {utils.formatEther(removeEther)} Eth</p>)
+                     : (<p> You will get 0 {pool.name} and 0 Eth</p>)
+                    }
                  </div>
                   )}
                   </div>
@@ -540,18 +564,10 @@ export default function Home() {
               </center>
 
       )}
-      else {
-        return (
-          <div className={styles.description}>
-            There is no pool
-          </div>
-      );
-    }
   };
 
 
   const updateBalance = async (tokenAddress) => {
-    console.log("updateBalance",tokenAddress)
     const provider = await getProviderOrSigner(false);
     const balance = await getTokensBalance(provider, walletAddress, tokenAddress);
     setSelectedSwapToken(tokenAddress);
@@ -571,13 +587,20 @@ export default function Home() {
           </div>
         );
       }
-      else if(parseInt(nbPool) !=0) {
+      else if (parseInt(nbPool) ==0){
+        return (
+          <div className={styles.description}>
+            There is no pair
+          </div>
+        );
+      }
+      else  {
       return (
         <center>
         <div>
             <div className={styles.swap}>
                 <div className="row text-white">
-                    <div class="from_balance"><b> Balance : {utils.formatEther(inputBalance)}</b>
+                    <div className="from_balance"><b> Balance : {utils.formatEther(inputBalance)}</b>
                     <input
                     onClick={async (e) => {setSwapAmount(utils.formatEther(inputBalance));
                       await _getAmountOfTokensReceivedFromSwap(utils.formatEther(inputBalance) || "0");}}
@@ -601,7 +624,7 @@ export default function Home() {
                     placeholder='0'
                     required />
               {!ethSelected ? (
-              <select name="inputList" id="inputTokenList" onChange={ (e)=> updateBalance(e.target.value)}>
+              <select className="inputList" id="inputTokenList" onChange={ (e)=> updateBalance(e.target.value)}>
                   {displayListToken()}
               </select> )
               : (<span>ETH</span>)}
@@ -620,7 +643,7 @@ export default function Home() {
 
 
                 <div className="row text-white">
-                    <div class="to_balance"> <b> Balance : {utils.formatEther(outputBalance)}</b> </div>
+                    <div className="to_balance"> <b> Balance : {utils.formatEther(outputBalance)}</b> </div>
                 </div>
                 <div className="input-group mb-2">
                   <input
@@ -636,21 +659,11 @@ export default function Home() {
                   </select> )
                   : (<span>ETH</span>)}
                 </div>
-                <div className="mb-4 text-white ">
-                  <center><p class="info_rate">Exchange Rate : 1 ETH = </p></center>
-                </div>
                   <center><button onClick={_swapTokens} className={styles.btn_swap}>SWAP!</button></center>
             </div>
         </div>
         </center>
       );
-    }
-    else {
-      return (
-        <div className={styles.description}>
-          There is no pair
-        </div>
-    );
     }
     };
 
@@ -719,6 +732,7 @@ export default function Home() {
       }
     }
 
+
     const renderViewProposalsTab = () => {
       if(loading){
         return (
@@ -731,7 +745,6 @@ export default function Home() {
           return (
         <div>
         {listProposals.reverse().map(function(proposal, key) {
-          console.log("is ex",proposal.id.toString(), proposal.isExecuted)
           let status, endDate, button, detailsView
           if((proposal.deadline.toString() >  Math.round(new Date()/1000)) && !listHasVoted[proposal.id.toString()] )
           {
@@ -781,8 +794,8 @@ export default function Home() {
 
           return(
           <div  key={key} className={styles.prop}>
-            <p class={styles.prop_id}> Proposal # {proposal.id.toString()}</p>
-            <p class={styles.prop_title}> Title : <b>{proposal.titre}</b></p>
+            <p className={styles.prop_id}> Proposal # {proposal.id.toString()}</p>
+            <p className={styles.prop_title}> Title : <b>{proposal.titre}</b></p>
             <span className={styles.prop_status}> Status : <b>{status}</b></span>
             <div className={styles.progress}>
               {progressBar(proposal.yes.toString(),(parseInt(proposal.yes)+parseInt(proposal.no)).toString())}
