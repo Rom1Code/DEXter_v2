@@ -274,6 +274,7 @@ export default function Home() {
        // Get all the updated amounts after the swap
        await getAmounts();
        setSwapAmount("");
+       await _getAmountOfTokensReceivedFromSwap(0);
      }
    } catch (err) {
      console.error(err);
@@ -476,10 +477,9 @@ export default function Home() {
             <div key={key} className={styles.pool}>
                 <div>
                   <p className={styles.rate_pool}>Pool {pool.symbol}/ETH token </p>
-                  <p className={styles.balance}>ETH : {utils.formatEther(ethBalance)}</p>
-                  <p className={styles.balance}>{pool.name} Token : {utils.formatEther((listBalanceOfTokens[pool.id]))} </p>
-                    <p className={styles.balance}>LP Token : {utils.formatEther(listLPToken[pool.id])} </p>
-                  <p className={styles.balance}>Pool reserve {utils.formatEther(pool.tokenReservedBalance)} {pool.symbol}/{utils.formatEther(pool.ethReservedBalance)} ETH :</p>
+                  <p className={styles.balance}>ETH : {utils.formatEther(ethBalance).substring(0,10)}</p>
+                  <p className={styles.balance}>{pool.name} Token : {utils.formatEther((listBalanceOfTokens[pool.id])).substring(0,10)} </p>
+                  <p className={styles.balance}>Pool reserve {utils.formatEther(pool.tokenReservedBalance).substring(0,10)} {pool.symbol}/{utils.formatEther(pool.ethReservedBalance)} ETH :</p>
 
                 </div>
                   {pool.lpBalance==0 ? (
@@ -534,7 +534,7 @@ export default function Home() {
                      className={styles.btn_stake}>
                        ADD</button>
                        <br/>
-                       <br/>
+                  <p className={styles.balance}>LP Token : {utils.formatEther(listLPToken[pool.id])} </p>
                  <input
                    type="number"
                    placeholder="Amount of LP"
@@ -600,7 +600,7 @@ export default function Home() {
         <div>
             <div className={styles.swap}>
                 <div className="row text-white">
-                    <div className="from_balance"><b> Balance : {utils.formatEther(inputBalance)}</b>
+                    <div className="from_balance"><b> Balance : {utils.formatEther(inputBalance).substring(0,10)}</b>
                     <input
                     onClick={async (e) => {setSwapAmount(utils.formatEther(inputBalance));
                       await _getAmountOfTokensReceivedFromSwap(utils.formatEther(inputBalance) || "0");}}
@@ -617,7 +617,7 @@ export default function Home() {
                     onChange={async (e) => {
               setSwapAmount(e.target.value || "");
               // Calculate the amount of tokens user would receive after the swap
-              await _getAmountOfTokensReceivedFromSwap(e.target.value || "0");
+              selectedSwapToken!=undefined ? await _getAmountOfTokensReceivedFromSwap(e.target.value || "0") : 0;
             }}
                     value={swapAmount}
                     className="form-control form-control-lg"
@@ -643,7 +643,7 @@ export default function Home() {
 
 
                 <div className="row text-white">
-                    <div className="to_balance"> <b> Balance : {utils.formatEther(outputBalance)}</b> </div>
+                    <div className="to_balance"> <b> Balance : {utils.formatEther(outputBalance).substring(0,10)}</b> </div>
                 </div>
                 <div className="input-group mb-2">
                   <input
@@ -659,7 +659,8 @@ export default function Home() {
                   </select> )
                   : (<span>ETH</span>)}
                 </div>
-                  <center><button onClick={_swapTokens} className={styles.btn_swap}>SWAP!</button></center>
+                  <center><button onClick= {_swapTokens}
+                   className={styles.btn_swap}>SWAP!</button></center>
             </div>
         </div>
         </center>
