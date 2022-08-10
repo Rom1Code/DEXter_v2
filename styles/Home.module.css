@@ -1,16 +1,13 @@
 
 .main {
-  background-color: #0093E9;
-  background-image: linear-gradient(160deg, #0093E9 0%, #80D0C7 100%);
-  //background-color: #0093E9;
-  //background-image: linear-gradient(160deg, #FD69F5 0%, #FD69F5 100%));
+background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(15,27,49,1) 0%, rgba(0,112,218,1) 90% );
   min-height:1000px;
   max-height: inherit;
   justify-content: center;
   padding-bottom: 25px
 }
 .navbar {
-  background-color: #0093E9;
+  background-color: rgba(0,112,218,1);
   border-bottom: 1px solid white;
   font-weight: bold;
   position: fixed;
@@ -23,11 +20,15 @@
 }
 
 .description {
+  background-color: #FAD961;
+  background-image: linear-gradient(90deg, #FAD961 0%, #F76B1C 100%);
   line-height: 1;
   margin: 2rem 0;
   font-size: 1.2rem;
   color : white;
   text-align: center;
+  padding-top: 5px;
+  padding-bottom: 5px
 }
 
 .page {
@@ -40,14 +41,14 @@
   border-radius: 10%;
   font-size: 20px;
   background-color: white;
-  color: #0093E9;
+  color: rgba(0,112,218,1);
   font-weight: bold;
 }
 
 .btn_navbar:focus {
     outline-color: transparent;
     box-shadow: 0 0 0 2px #FFFFFF;
-    background-color: #0093E9;
+    background-color: rgba(0,112,218,1);
     color: white;
 
   }
@@ -79,6 +80,85 @@
   text-align: center;
 }
 
+
+/* DASHBOARD */
+
+.recap {
+  margin-bottom: 70px;
+  padding-top: 50px
+}
+
+.portfolio,.staking, .reward {
+width: 20%;
+background-color: white;
+border-radius: 10%;
+padding: 5px;
+margin-bottom: 10px;
+margin-left:  40%
+}
+
+.balance {
+  color: black;
+  margin-left: 5px
+}
+
+.title {
+  font-size: 20px;
+  text-align: center;
+  font-weight: bold;
+  color :#0093E9
+}
+
+.historique {
+  text-align: center;
+  color: white;
+  width: 80%;
+  margin-left: 10%;
+  padding-bottom :50px
+}
+
+.histo_title, .proposal_title {
+  font-weight: bold;
+  color: white;
+  font-size: 20px;
+  text-align: center;
+
+}
+
+.table_histo {
+  border: 1px solid white;
+  width: 80%
+}
+
+.prop_desc {
+  font-weight: bold;
+  font-size: 15px
+}
+
+.prop_id {
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+}
+
+.active_prop {
+  margin-left: 35%;
+  width: 30%;
+  padding: 5px;
+  border-radius: 5%;
+  margin-top: 5px;
+  color: #0093E9;
+  margin-bottom: 50px
+}
+.active_prop_data {
+  background-color: white;
+  padding: 5px;
+  border-radius: 5%;
+  margin-bottom: 10px
+
+}
+
+
 /* POOL */
 
 .pool {
@@ -106,7 +186,7 @@
   border-radius: 10%;
   border: none;
   font-size: 17px;
-  background-color: #0093E9;
+  background-color: rgba(0,112,218,1);
   margin-right: 2px
 }
 
@@ -115,12 +195,14 @@
   border-radius: 10%;
   border: none;
   font-size: 17px;
-  background-color: #0093E9
+  background-color: rgba(0,112,218,1)
 }
 
 .btn_unstake:hover, .btn_stake:hover {
   background: #eee;
-  color:#0093E9
+  color:rgba(0,112,218,1);
+  font-weight: bold;
+
 }
 
 /* SWAP */
@@ -141,7 +223,7 @@
   border: none;
   font-size: 20px;
   margin-bottom: 5px;
-  background-color: #0093E9
+  background-color: rgba(0,112,218,1)
 }
 
 
@@ -149,10 +231,11 @@
   border: none;
   border-radius: 10%;
   font-size: 20px;
-  background-color: white;
-  color: #0093E9;
+  background-color: rgba(0,112,218,1);
+  color: white;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 
 .btn_swap:focus,{
@@ -171,7 +254,8 @@
 
 .btn_swap:hover, .btn_max:hover, .btn_half:hover{
   background: #eee;
-  color:#0093E9
+  color:rgba(0,112,218,1);
+  font-weight: bold;
 }
 
 
@@ -249,7 +333,7 @@
   font-size: 20px;
   margin-bottom: 5px;
   margin-left: 2px;
-  background-color: #0093E9;
+  background-color: rgba(0,112,218,1);
   border: 1px solid white
 
 }
@@ -286,12 +370,12 @@
   font-size: 20px;
   margin-bottom: 15px;
   margin-left: 2px;
-  background-color: #0093E9;
-  box-shadow: 3px 5px #80D0C7;
+  background-color: rgba(0,112,218,1);
+  //box-shadow: 3px 5px #80D0C7;
 }
 
 .details {
-  background-color: #0093E9;
+  background-color: rgba(0,112,218,1);
   border-top : 1px solid black;
   margin-top: 5px;
   padding: 5px;

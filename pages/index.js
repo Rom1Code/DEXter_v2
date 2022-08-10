@@ -1,9 +1,14 @@
 import { BigNumber, providers, utils, Contract } from "ethers";
 import Head from "next/head";
+import Image from 'next/image';
 import React, { useEffect, useRef, useState } from "react";
 import Web3Modal from "web3modal";
 import styles from "../styles/Home.module.css";
-import flecheSwap from "./fleche_swap.png";
+import romLogo from '../public/ROM.png';
+import ethLogo from '../public/ETH.png';
+import luxLogo from '../public/LUX.jpg';
+import dexLogo from '../public/DEX.png';
+
 import {
   ROMAIN_TOKEN_ADDRESS,
   LUCILE_TOKEN_ADDRESS,
@@ -855,18 +860,23 @@ export default function Home() {
         )
     }
 
+    const renderDashBoard = () => {
+      return (
+        <div className={styles.recap}>
+          <div className={styles.portfolio}>
+            <p className={styles.title}>Portfolio</p>
+             <p className={styles.balance}><Image src={ethLogo} height='32' width='32' alt="eth"/> ETH : {utils.formatEther(ethBalance).substring(0,10)}</p>
+            <p className={styles.balance}> <Image src={luxLogo} height='32' width='32' alt="lux"/> Lucile Token : {utils.formatEther(lucileBalance).substring(0,10)}</p>
+            <p className={styles.balance}><Image src={romLogo} height='32' width='32' alt="rom"/> Romain Token : {utils.formatEther(romainBalance).substring(0,10)}</p>
+            <p className={styles.balance}><Image src={dexLogo} height='32' width='32' alt="dex"/> DEX Token : {utils.formatEther(dexBalance).substring(0,10)}</p>
+          </div>
+         </div>
+      )
+    }
+
     const renderPage =  () => {
       if(currentPage=="Dashboard"){
-        return (<Dashboard
-          dexTokenBalance = {utils.formatEther(dexBalance)}
-          lucileTokenBalance = {utils.formatEther(lucileBalance)}
-          romainTokenBalance = {utils.formatEther(romainBalance)}
-          ethBalance = {utils.formatEther(ethBalance)}
-          etherBalanceContract = {utils.formatEther(etherBalanceContract)}
-          reservedLucile = {utils.formatEther(reservedLucile)}
-          reservedRomain = {utils.formatEther(reservedRomain)}
-          lpBalance = {utils.formatEther(lpBalance)}
-          />)
+        return (renderDashBoard());
       }
       else if(currentPage=="Pool"){
         return (renderPool());
