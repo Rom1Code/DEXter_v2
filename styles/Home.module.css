@@ -94,16 +94,16 @@ background-color: white;
 border-radius: 10%;
 padding: 5px;
 margin-bottom: 10px;
-margin-left:  40%
+margin-left:  40%;
 }
 
-.balance {
+.balance_dash {
   color: black;
   margin-left: 5px
 }
 
 .title {
-  font-size: 20px;
+  font-size: 25px;
   text-align: center;
   font-weight: bold;
   color :#0093E9
@@ -165,16 +165,23 @@ margin-left:  40%
   text-align: center;
   margin-top:50px;
   background-color: white;
-  padding: 10px;
   width: 30%;
   margin-bottom: 20px;
-  border-radius: 5%
+  border-radius: 5%;
+  padding-top: 1px
 }
 
 
-.rate_pool {
-  margin-bottom: -15px;
+
+.pool_title {
+  background-color: rgba(0,112,218,1);
+  font-size: 20px;
+  color: white;
+  font-weight: bold;
+  padding-bottom: 5px;
+  padding-top: 5px
 }
+
 
 .balance {
   color :#0093E9;
@@ -207,12 +214,19 @@ margin-left:  40%
 
 /* SWAP */
 
+.logo_eth {
+  padding: 5px;
+}
 
+.logo_swap {
+padding: 5px;
+
+}
 .swap {
   background-color: white;
   border-radius: 5%;
-  width:40%;
-  padding-top: 10px;
+  width:30%;
+  padding-top: 20px;
   margin-top:50px;
   justify-content: center;
 }
@@ -222,8 +236,9 @@ margin-left:  40%
   border-radius: 10%;
   border: none;
   font-size: 20px;
-  margin-bottom: 5px;
-  background-color: rgba(0,112,218,1)
+  margin-bottom: 15px;
+  background-color: rgba(0,112,218,1);
+  margin-left: 5px
 }
 
 
@@ -235,7 +250,10 @@ margin-left:  40%
   color: white;
   font-weight: bold;
   margin-top: 15px;
-  margin-bottom: 15px;
+  margin-bottom: 25px;
+  margin-top: 25px;
+  padding:10px
+
 }
 
 .btn_swap:focus,{

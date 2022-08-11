@@ -4,10 +4,6 @@ import Image from 'next/image';
 import React, { useEffect, useRef, useState } from "react";
 import Web3Modal from "web3modal";
 import styles from "../styles/Home.module.css";
-import romLogo from '../public/ROM.png';
-import ethLogo from '../public/ETH.png';
-import luxLogo from '../public/LUX.jpg';
-import dexLogo from '../public/DEX.png';
 
 import {
   ROMAIN_TOKEN_ADDRESS,
@@ -91,8 +87,6 @@ export default function Home() {
     */
 
 
-
-
   const getAmounts = async () => {
       try {
         const provider = await getProviderOrSigner(false);
@@ -132,6 +126,30 @@ export default function Home() {
     };
 
 
+
+      /**** OTHER FUNCTIONS****/
+
+
+      const displayListToken = () => {
+        return (
+        listPoolsWithLP.map((pool, key) => (
+          <option value={pool.tokenAddress}>{pool.symbol}</option>)
+        ))
+      }
+
+      const logoToken = () => {
+        return (
+          <span className={styles.logo_swap}>
+        {listPoolsWithLP.map((pool, key) =>
+          pool.tokenAddress == selectedSwapToken ?
+            (<Image  src={"/"+pool.symbol +".png"} height='32' width='32' alt="lux"/>)
+          :
+             (null)
+          )}
+          </span>
+        )}
+
+
       /**** POOL FUNCTIONS ****/
     const _getNbPool = async  () => {
       try {
@@ -164,14 +182,6 @@ export default function Home() {
       }
     }
 
-    const displayListToken = () => {
-      return (
-      listPoolsWithLP.map((pool, key) => {
-        return (
-        <option value={pool.tokenAddress}>{pool.symbol}</option>)
-    }
-  ))
-    }
 
     const _addLiquidity = async (poolId, tokenAddress) => {
        try {
@@ -249,9 +259,6 @@ export default function Home() {
   };
 
 
-
-
-
   /**** SWAP FUNCTIONS ****/
 
 
@@ -326,6 +333,20 @@ export default function Home() {
      setOutputBalance(ethBalance);
    }
  }
+
+ const updateBalance = async (tokenAddress) => {
+   const provider = await getProviderOrSigner(false);
+   const balance = await getTokensBalance(provider, walletAddress, tokenAddress);
+   setSelectedSwapToken(tokenAddress);
+   console.log("setSelectedSwapToken",tokenAddress)
+   if(ethSelected){
+     setOutputBalance(balance);
+   }
+   else{
+     setInputBalance(balance);
+   }
+ }
+
 
  /*  DAO Function   */
 
@@ -481,7 +502,7 @@ export default function Home() {
 
             <div key={key} className={styles.pool}>
                 <div>
-                  <p className={styles.rate_pool}>Pool {pool.symbol}/ETH token </p>
+                  <p className={styles.pool_title}>Pool {pool.symbol}/ETH </p>
                   <p className={styles.balance}>ETH : {utils.formatEther(ethBalance).substring(0,10)}</p>
                   <p className={styles.balance}>{pool.name} Token : {utils.formatEther((listBalanceOfTokens[pool.id])).substring(0,10)} </p>
                   <p className={styles.balance}>Pool reserve {utils.formatEther(pool.tokenReservedBalance).substring(0,10)} {pool.symbol}/{utils.formatEther(pool.ethReservedBalance)} ETH :</p>
@@ -571,19 +592,6 @@ export default function Home() {
       )}
   };
 
-
-  const updateBalance = async (tokenAddress) => {
-    const provider = await getProviderOrSigner(false);
-    const balance = await getTokensBalance(provider, walletAddress, tokenAddress);
-    setSelectedSwapToken(tokenAddress);
-    if(ethSelected){
-      setOutputBalance(balance);
-    }
-    else{
-      setInputBalance(balance);
-    }
-  }
-
     const renderSwap = () => {
       if(loading){
         return (
@@ -628,11 +636,12 @@ export default function Home() {
                     className="form-control form-control-lg"
                     placeholder='0'
                     required />
-              {!ethSelected ? (
+
+              {!ethSelected ? (<span>  {logoToken()}
               <select className="inputList" id="inputTokenList" onChange={ (e)=> updateBalance(e.target.value)}>
-                  {displayListToken()}
-              </select> )
-              : (<span>ETH</span>)}
+                {displayListToken()}
+              </select> </span> )
+              : (<span className={styles.logo_eth}><Image src="/ETH.png" height='32' width='32' alt="eth"/><span>ETH</span></span>)}
                 </div>
                 <center>
                 <input
@@ -658,11 +667,13 @@ export default function Home() {
                     value={utils.formatEther(tokenToBeReceivedAfterSwap)}
                     disabled
                   />
-                  {ethSelected ? (
+
+                  {ethSelected ?  (<span>  {logoToken()}
                   <select name="outputList" id="outputTokenList" onChange={ (e)=> updateBalance(e.target.value)}>
                       {displayListToken()}
-                  </select> )
-                  : (<span>ETH</span>)}
+                  </select></span> )
+
+                  : (<span className={styles.logo_eth}><Image  src="/ETH.png" height='32' width='32' alt="eth"/><span> ETH</span></span>)}
                 </div>
                   <center><button onClick= {_swapTokens}
                    className={styles.btn_swap}>SWAP!</button></center>
@@ -865,14 +876,15 @@ export default function Home() {
         <div className={styles.recap}>
           <div className={styles.portfolio}>
             <p className={styles.title}>Portfolio</p>
-             <p className={styles.balance}><Image src={ethLogo} height='32' width='32' alt="eth"/> ETH : {utils.formatEther(ethBalance).substring(0,10)}</p>
-            <p className={styles.balance}> <Image src={luxLogo} height='32' width='32' alt="lux"/> Lucile Token : {utils.formatEther(lucileBalance).substring(0,10)}</p>
-            <p className={styles.balance}><Image src={romLogo} height='32' width='32' alt="rom"/> Romain Token : {utils.formatEther(romainBalance).substring(0,10)}</p>
-            <p className={styles.balance}><Image src={dexLogo} height='32' width='32' alt="dex"/> DEX Token : {utils.formatEther(dexBalance).substring(0,10)}</p>
+             <p className={styles.balance_dash}><Image src="/ETH.png" height='32' width='32' alt="eth"/> Ether : {utils.formatEther(ethBalance).substring(0,10)}</p>
+            <p className={styles.balance_dash}> <Image src="/LUX.jpg" height='32' width='32' alt="lux"/> Lucile Token : {utils.formatEther(lucileBalance).substring(0,10)}</p>
+            <p className={styles.balance_dash}><Image src="/ROM.png" height='32' width='32' alt="rom"/> Romain Token : {utils.formatEther(romainBalance).substring(0,10)}</p>
+            <p className={styles.balance_dash}><Image src="/DEX.png" height='32' width='32' alt="dex"/> DEX Token : {utils.formatEther(dexBalance).substring(0,10)}</p>
           </div>
          </div>
       )
     }
+
 
     const renderPage =  () => {
       if(currentPage=="Dashboard"){
@@ -935,6 +947,8 @@ useEffect(() => {
 }, [currentPage]);
 
 
+
+
   return (
     <div>
       <Head>
@@ -947,7 +961,7 @@ useEffect(() => {
         <button className={styles.btn_navbar}onClick={(event) => {setCurrentPage("Dashboard")}}>Dashboard</button>
         <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Swap")}}>Swap</button>
         <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Pool")}}>Pool</button>
-        <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Gouvernance")}}>Gouvernance</button>
+        <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Gouvernance")}}>DAO</button>
         {renderButtonConnect()}
     </navbar>
     <div className={styles.page}>
