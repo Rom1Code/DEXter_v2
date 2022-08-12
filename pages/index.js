@@ -139,7 +139,7 @@ export default function Home() {
 
       const logoToken = () => {
         return (
-          <span className={styles.logo_swap}>
+          <span className={styles.logo_token}>
         {listPoolsWithLP.map((pool, key) =>
           pool.tokenAddress == selectedSwapToken ?
             (<Image  src={"/"+pool.symbol +".png"} height='32' width='32' alt="lux"/>)
@@ -230,11 +230,6 @@ export default function Home() {
   };
 
   const _getTokensAfterRemove = async (_removeLPTokens, _tokenAddress, _ethReservedBalance, _tokenReservedBalance, _lpBalance) => {
-    console.log("poolid eth",_ethReservedBalance.toString())
-    console.log("removeLPTokenWei",_removeLPTokens.toString())
-    console.log("_tokenAddress",_tokenAddress)
-    console.log("_lpbalance",_lpBalance.toString())
-
     try {
       const provider = await getProviderOrSigner();
       // Convert the LP tokens entered by the user to a BigNumber
@@ -502,11 +497,16 @@ export default function Home() {
 
             <div key={key} className={styles.pool}>
                 <div>
-                  <p className={styles.pool_title}>Pool {pool.symbol}/ETH </p>
+                <div className={styles.pool_title}>
+                  <div className={styles.pool_logo}>
+                    <Image src="/ETH.png" height='32' width='32' alt="eth"/>
+                    <Image src={"/"+pool.symbol+".png"} height='32' width='32' alt="eth"/>
+                  </div>
+                  <label className={styles.lbl_pool_title}>Pool {pool.symbol}/ETH </label>
+                </div>
                   <p className={styles.balance}>ETH : {utils.formatEther(ethBalance).substring(0,10)}</p>
                   <p className={styles.balance}>{pool.name} Token : {utils.formatEther((listBalanceOfTokens[pool.id])).substring(0,10)} </p>
                   <p className={styles.balance}>Pool reserve {utils.formatEther(pool.tokenReservedBalance).substring(0,10)} {pool.symbol}/{utils.formatEther(pool.ethReservedBalance)} ETH :</p>
-
                 </div>
                   {pool.lpBalance==0 ? (
                     <div >
@@ -527,8 +527,8 @@ export default function Home() {
                           <button
                           type="button"
                           onClick={() =>{_addLiquidity(pool.id, pool.tokenAddress)} }
-                            className={styles.btn_stake}>
-                              ADD</button>
+                            className={styles.btn_add}>
+                              Add</button>
                       </div>
                   )
                : (
@@ -551,15 +551,17 @@ export default function Home() {
                      type="number"
                      placeholder="Amount of Token"
                      className=""
-                     value={ currentPoolCalcul == pool.id.toString() ? utils.formatEther(addTokens) : "0"}
+                     value={ currentPoolCalcul == pool.id.toString() ? utils.formatEther(addTokens).substring(1,10) : "0"}
                      disabled />
                      <br/>
                    <button
                    type="button"
                    onClick={() =>{_addLiquidity(pool.id, pool.tokenAddress)} }
-                     className={styles.btn_stake}>
-                       ADD</button>
+                     className={styles.btn_add}>
+                       Add</button>
                        <br/>
+
+                  <div className={styles.remove_liquidity}>
                   <p className={styles.balance}>LP Token : {utils.formatEther(listLPToken[pool.id])} </p>
                  <input
                    type="number"
@@ -574,15 +576,17 @@ export default function Home() {
                     <br/>
                    <button
                      type="button"
-                     className={styles.btn_unstake}
+                     className={styles.btn_remove}
                      onClick={() =>{_removeLiquidity(pool.id, pool.tokenAddress)}}>
-                       REMOVE
+                       Remove
                      </button>
                      {currentPoolCalcul == pool.id.toString() ? (
-                     <p> You will get {utils.formatEther(removeCD)} {pool.name} Tokens and {utils.formatEther(removeEther)} Eth</p>)
-                     : (<p> You will get 0 {pool.name} and 0 Eth</p>)
+                     <p className={styles.lbl_get_remove}> You will get {utils.formatEther(removeCD).substring(0,10)} {pool.name} Tokens and {utils.formatEther(removeEther)} Eth</p>)
+                     : (<p className={styles.lbl_get_remove}> You will get 0 {pool.name} and 0 Eth</p>)
                     }
                  </div>
+                 </div>
+
                   )}
                   </div>
               ))}
@@ -609,10 +613,12 @@ export default function Home() {
       }
       else  {
       return (
-        <center>
         <div>
             <div className={styles.swap}>
-                <div className="row text-white">
+              <div className={styles.input}>
+              <span className={styles.lbl_from}>FROM</span>
+
+                <div className={styles.input_balance}>
                     <div className="from_balance"><b> Balance : {utils.formatEther(inputBalance).substring(0,10)}</b>
                     <input
                     onClick={async (e) => {setSwapAmount(utils.formatEther(inputBalance));
@@ -624,7 +630,7 @@ export default function Home() {
                     className={styles.btn_half} type="button" id="half" value="half" />
                   </div>
                 </div>
-                <div className="input-group mb-4 overflow-hidden" style={{overflow: "hidden"}}>
+                <div>
                   <input
                     type="text"
                     onChange={async (e) => {
@@ -633,16 +639,19 @@ export default function Home() {
               selectedSwapToken!=undefined ? await _getAmountOfTokensReceivedFromSwap(e.target.value || "0") : 0;
             }}
                     value={swapAmount}
-                    className="form-control form-control-lg"
+                    className={styles.input_field}
                     placeholder='0'
                     required />
 
               {!ethSelected ? (<span>  {logoToken()}
-              <select className="inputList" id="inputTokenList" onChange={ (e)=> updateBalance(e.target.value)}>
+              <select className={styles.selectList} id="inputTokenList" onChange={ (e)=> updateBalance(e.target.value)}>
                 {displayListToken()}
               </select> </span> )
-              : (<span className={styles.logo_eth}><Image src="/ETH.png" height='32' width='32' alt="eth"/><span>ETH</span></span>)}
+              : (<span className={styles.logo_eth}><Image src="/ETH.png" height='32' width='32' alt="eth"/><span className= {styles.lbl_eth}> ETH</span></span>)}
                 </div>
+                </div>
+
+                <div className={styles.fleche_swap}>
                 <center>
                 <input
                 onClick= {async (e) => {
@@ -654,32 +663,39 @@ export default function Home() {
                  type="image" id="image" alt="switch" width='50'
                        src="./fleche_swap.png" />
                 </center>
+              </div>
 
+                <div className={styles.output}>
+                <span className={styles.lbl_to}>TO</span>
 
-                <div className="row text-white">
+                <div className={styles.output_balance}>
                     <div className="to_balance"> <b> Balance : {utils.formatEther(outputBalance).substring(0,10)}</b> </div>
                 </div>
-                <div className="input-group mb-2">
+                <div >
+                  <div>
                   <input
                     type="text"
-                    className="form-control form-control-lg"
+                    className={styles.output_field}
                     placeholder="0"
                     value={utils.formatEther(tokenToBeReceivedAfterSwap)}
                     disabled
                   />
 
                   {ethSelected ?  (<span>  {logoToken()}
-                  <select name="outputList" id="outputTokenList" onChange={ (e)=> updateBalance(e.target.value)}>
+                  <select className= {styles.selectList} name="outputList" id="outputTokenList" onChange={ (e)=> updateBalance(e.target.value)}>
                       {displayListToken()}
                   </select></span> )
 
-                  : (<span className={styles.logo_eth}><Image  src="/ETH.png" height='32' width='32' alt="eth"/><span> ETH</span></span>)}
+                  : (<span className={styles.logo_eth}><Image  src="/ETH.png" height='32' width='32' alt="eth"/><span className={styles.lbl_eth}> ETH</span></span>)}
                 </div>
+                </div>
+
+                </div>
+
                   <center><button onClick= {_swapTokens}
                    className={styles.btn_swap}>SWAP!</button></center>
             </div>
         </div>
-        </center>
       );
     }
     };
@@ -705,46 +721,43 @@ export default function Home() {
       else
       {
         return (
-        <center>
         <div className={styles.create_main}>
-        <p className={styles.create_prop_title}>Create Proposal</p>
-          <p className="">Title :
+        <div className={styles.create_prop_title}>Create Proposal</div>
+          <p className={styles.create_prop_field}>Title :</p>
+
             <input
                 type="text"
                 id="propTitle"
-                className= "ml-2 w-100"
+                className={styles.create_prop_input}
                 placeholder="Title"
                 required />
-          </p>
-          <p className="">Description :
-            <input
+          <p className={styles.create_prop_field}>Description :</p>
+            <textarea
                 type="text"
                 id="propDesc"
-                className= "ml-2 w-100"
+                rows="5"
+                cols="40"
+                className={styles.create_prop_textarea}
                 placeholder="Description"
-                required />
-          </p>
-          <p className="">Token Address :
+                required >tesdt</textarea>
+          <p className={styles.create_prop_field}>Token Address : </p>
             <input
                 type="text"
                 id="propTokenAddress"
-                className= "ml-2 w-100"
-                placeholder="Description"
+                className={styles.create_prop_input}
+                placeholder="ERC-20 address"
                 required />
-          </p>
-            <p className="">End date :
+            <p className={styles.create_prop_field}>End date : </p>
               <input
                   type="text"
                   id="propDeadline"
-                  className= "ml-2"
+                  className={styles.create_prop_input}
                   placeholder="Timestamp"
                   required />
-            </p>
             <p>
-            <button type="button" onClick = {(e) => _createProposal()} className={styles.btn_create}>Create</button>
+            <center><button type="button" onClick = {(e) => _createProposal()} className={styles.btn_create}>Create</button></center>
             </p>
         </div>
-        </center>
         );
       }
     }
@@ -811,7 +824,7 @@ export default function Home() {
 
           return(
           <div  key={key} className={styles.prop}>
-            <p className={styles.prop_id}> Proposal # {proposal.id.toString()}</p>
+            <div className={styles.prop_id}> Proposal # {proposal.id.toString()}</div>
             <p className={styles.prop_title}> Title : <b>{proposal.titre}</b></p>
             <span className={styles.prop_status}> Status : <b>{status}</b></span>
             <div className={styles.progress}>
