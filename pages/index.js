@@ -1,8 +1,8 @@
-import { BigNumber, providers, utils, Contract } from "ethers";
+import { BigNumber, providers, utils } from "ethers";
 import Head from "next/head";
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from "react";
-import Web3Modal from "web3modal";
+import web3Modal from "web3modal";
 import styles from "../styles/Home.module.css";
 
 import {
@@ -906,7 +906,7 @@ useEffect(() => {
   if (!walletConnected) {
     // Assign the Web3Modal class to the reference object by setting it's `current` value
     // The `current` value is persisted throughout as long as this page is open
-    web3ModalRef.current = new Web3Modal({
+    web3ModalRef.current = new web3Modal({
       network: "rinkeby",
       providerOptions: {},
       disableInjectedProvider: false,
