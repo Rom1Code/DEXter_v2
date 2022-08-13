@@ -16,7 +16,6 @@ export const getAmountOfTokensReceivedFromSwap = async (
   ethBalance,
   reservedCD
 ) => {
-  console.log("ethSelected",ethSelected.toString());
 
   // Create a new instance of the exchange contract
   const exchangeContract = new Contract(
@@ -58,13 +57,7 @@ export const swapTokens = async (
   ethSelected,
   tokenAddress
 ) => {
-  console.log("swapAmountWei",swapAmountWei.toString());
-  console.log("tokenToBeReceivedAfterSwap",tokenToBeReceivedAfterSwap.toString());
-
-  console.log("ethSelected",ethSelected.toString());
-  console.log("tokenAddress",tokenAddress.toString());
-
-
+  
   // Create a new instance of the exchange contract
   const exchangeContract = new Contract(
     EXCHANGE_CONTRACT_ADDRESS,

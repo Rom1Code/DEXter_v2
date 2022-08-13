@@ -51,7 +51,7 @@ export const voteForProposal = async (signer, proposalId, _vote) => {
   await tx.wait();
 }
 
-export const  executeProposal = async (signer, proposalId) => {
+export const executeProposal = async (signer, proposalId) => {
   const daoContract = new Contract(
     DAO_CONTRACT_ADDRESS,
     DAO_CONTRACT_ABI,

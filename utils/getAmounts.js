@@ -77,7 +77,6 @@ export const getDexTokenBalance = async (provider, walletAddress) => {
       provider
     );
     const balanceOfDexTokens = await exchangeContract.balanceOf(walletAddress);
-    console.log("dex" ,balanceOfDexTokens.toString() )
     return balanceOfDexTokens;
   } catch (err) {
     console.error(err);
@@ -91,7 +90,6 @@ export const getEthinPool = (listPools, tokenAddress) => {
        balance = listPools[i].ethReservedBalance;
     }
   }
-  console.log(balance.toString())
   return balance;
 }
 
@@ -102,6 +100,5 @@ export const getTokeninPool = (listPools, tokenAddress) => {
       balance = listPools[i].tokenReservedBalance;
     }
   }
-  console.log(balance.toString())
   return balance;
 }

@@ -118,7 +118,7 @@ export default function Home() {
       const displayListToken = () => {
         return (
         listPoolsWithLP.map((pool, key) => (
-          <option value={pool.tokenAddress}>{pool.symbol}</option>)
+          <option key="key" value={pool.tokenAddress}>{pool.symbol}</option>)
         ))
       }
 
@@ -318,7 +318,6 @@ export default function Home() {
    const provider = await getProviderOrSigner(false);
    const balance = await getTokensBalance(provider, walletAddress, tokenAddress);
    setSelectedSwapToken(tokenAddress);
-   console.log("setSelectedSwapToken",tokenAddress)
    if(ethSelected){
      setOutputBalance(balance);
    }

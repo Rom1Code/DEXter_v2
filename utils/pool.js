@@ -17,8 +17,6 @@ export const addLiquidity = async (
   addTokenAmountWei,
   addEtherAmountWei, poolId, tokenAddress
 ) => {
-  console.log("addLiquidity", poolId)
-  console.log("tokenAddress", tokenAddress)
 
   try {
     // create a new instance of the token contract
@@ -104,10 +102,6 @@ export const getTokensAfterRemove = async (
   tokenReserve,
   lpBalance,
 ) => {
-  console.log("removeLPTokenWei",removeLPTokenWei.toString())
-  console.log("_ethBalance",_ethBalance.toString())
-  console.log("tokenReserve",tokenReserve.toString())
-  console.log("lpBalance",lpBalance.toString())
 
     // Create a new instance of the exchange contract
     // Get the total supply of `Crypto Dev` LP tokens
@@ -122,7 +116,6 @@ export const getTokensAfterRemove = async (
     // Ratio is -> (amount of CD tokens sent back to the user / CD Token reserve) = (LP tokens withdrawn) / (total supply of LP tokens)
     // Then (amount of CD tokens sent back to the user) = (CD token reserve * LP tokens withdrawn) / (total supply of LP tokens)
     const _removeEther = _ethBalance.mul(removeLPTokenWei).div(_totalSupply);
-    console.log("_removeEther",_removeEther.toString())
     const _removeCD = tokenReserve
       .mul(removeLPTokenWei)
       .div(_totalSupply);
