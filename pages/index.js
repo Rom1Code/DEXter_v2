@@ -780,8 +780,7 @@ export default function Home() {
           {
             status = <span className="text-success font-weight-bold">Passed</span>
             endDate = "Finished"
-            button = <div className="col text-end"><input onClick={(event) => {}}
-                              className={styles.btn_execute} type="button" value="Execute" onClick = { () => _executeProposal(proposal.id.toString())} /></div>
+            button = <div className="col text-end"><input className={styles.btn_execute} type="button" value="Execute" onClick = { () => _executeProposal(proposal.id.toString())} /></div>
           }
           else if (proposal.isExecuted){
             status = "Executed"
