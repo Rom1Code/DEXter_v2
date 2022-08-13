@@ -68,23 +68,6 @@ export const getLPTokensBalance = async (provider, address) => {
   }
 };
 
-/**
- * getReserveOfCDTokens: Retrieves the amount of CD tokens in the
- * exchange contract address
- */
-export const getReserveOfTokens = async (provider, address) => {
-  try {
-    const exchangeContract = new Contract(
-      EXCHANGE_CONTRACT_ADDRESS,
-      EXCHANGE_CONTRACT_ABI,
-      provider
-    );
-    const reserve = await exchangeContract.getReserve(address);
-    return reserve;
-  } catch (err) {
-    console.error(err);
-  }
-};
 
 export const getDexTokenBalance = async (provider, walletAddress) => {
   try {

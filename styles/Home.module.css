@@ -36,23 +36,27 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
 }
 
 .btn_navbar {
+  background-color: rgba(0,112,218,1);
   margin-left: 5px;
   border: none;
-  border-radius: 10%;
   font-size: 20px;
-  background-color: white;
-  color: rgba(0,112,218,1);
+  color: white;
   font-weight: bold;
 }
 
 .btn_navbar:focus {
-    outline-color: transparent;
     box-shadow: 0 0 0 2px #FFFFFF;
     background-color: rgba(0,112,218,1);
     color: white;
+    border: none;
+    border-radius: 10px
 
   }
-.btn_navbar:hover {background: #eee;}
+.btn_navbar:hover {
+  background: white;
+  color: rgba(0,112,218,1);
+  border-radius: 10px
+}
 
 .walletAddress {
   color: white;

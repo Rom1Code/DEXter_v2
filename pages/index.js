@@ -18,13 +18,11 @@ import {
   getTokensAfterRemove,
   getNbPool,
   fetchAllPools,
-  getTokensBalanceV2,
   } from "../utils/pool";
 import {
   getTokensBalance,
   getEtherBalance,
   getLPTokensBalance,
-  getReserveOfTokens,
   getDexTokenBalance,
   getEthinPool,
   getTokeninPool,
@@ -33,8 +31,6 @@ import { swapTokens, getAmountOfTokensReceivedFromSwap } from "../utils/swap";
 import { createProposal, voteForProposal, fetchAllProposals, getNbProposal, executeProposal } from "../utils/dao";
 import { progressBar, timeConverter } from "../utils/helper";
 
-
-import Dashboard from './Dashboard'
 
 export default function Home() {
 
@@ -48,9 +44,6 @@ export default function Home() {
   const [ethBalance, setEtherBalance] = useState(zero);
   const [lucileBalance, setLucileBalance] = useState(zero);
   const [romainBalance, setRomainBalance] = useState(zero);
-  const [lpBalance, setLPBalance] = useState(zero);
-  const [reservedLucile, setReservedLucile] = useState(zero);
-  const [reservedRomain, setReservedRomain] = useState(zero);
   const [etherBalanceContract, setEtherBalanceContract] = useState(zero);
   const [currentPage, setCurrentPage] = useState("Dashboard");
   const [addEther, setAddEther] = useState(zero);
@@ -101,11 +94,6 @@ export default function Home() {
         const _lucileBalance = await getTokensBalance(provider, address, LUCILE_TOKEN_ADDRESS);
         // get the amount of `Crypto Dev` tokens held by the user
         const _romainBalance = await getTokensBalance(provider, address, ROMAIN_TOKEN_ADDRESS);
-        // get the amount of `Crypto Dev` LP tokens held by the user
-        const _lpBalance = await getLPTokensBalance(provider, address);
-        // gets the amount of `CD` tokens that are present in the reserve of the `Exchange contract`
-        const _reservedLucile = await getReserveOfTokens(provider, LUCILE_TOKEN_ADDRESS);
-        const _reservedRomain = await getReserveOfTokens(provider, ROMAIN_TOKEN_ADDRESS);
         // Get the ether reserves in the contract
         const _ethBalanceContract = await getEtherBalance(provider, null, true);
 
@@ -114,9 +102,6 @@ export default function Home() {
         setEtherBalance(_ethBalance);
         setLucileBalance(_lucileBalance);
         setRomainBalance(_romainBalance);
-        setLPBalance(_lpBalance);
-        setReservedLucile(_reservedLucile);
-        setReservedRomain(_reservedRomain);
         setEtherBalanceContract(_ethBalanceContract);
         setInputBalance(_ethBalance);
 
@@ -142,7 +127,7 @@ export default function Home() {
           <span className={styles.logo_token}>
         {listPoolsWithLP.map((pool, key) =>
           pool.tokenAddress == selectedSwapToken ?
-            (<Image  src={"/"+pool.symbol +".png"} height='32' width='32' alt="lux"/>)
+            (<Image key="key" src={"/"+pool.symbol +".png"} height='32' width='32' alt="lux"/>)
           :
              (null)
           )}
@@ -478,7 +463,7 @@ export default function Home() {
     const renderPool = () => {
       if(loading){
         return (
-          <div className={styles.description}>
+          <div className={styles.loading}>
             Loading... Waiting for transaction...
           </div>
         );
@@ -599,7 +584,7 @@ export default function Home() {
     const renderSwap = () => {
       if(loading){
         return (
-          <div className={styles.description}>
+          <div className={styles.loading}>
             Loading... Waiting for transaction...
           </div>
         );
@@ -703,7 +688,7 @@ export default function Home() {
     const renderCreateProposalTab = () => {
       if(loading){
         return (
-          <div className={styles.description}>
+          <div className={styles.loading}>
             Loading... Waiting for transaction...
           </div>
         );
@@ -739,7 +724,7 @@ export default function Home() {
                 cols="40"
                 className={styles.create_prop_textarea}
                 placeholder="Description"
-                required >tesdt</textarea>
+                required ></textarea>
           <p className={styles.create_prop_field}>Token Address : </p>
             <input
                 type="text"
@@ -766,7 +751,7 @@ export default function Home() {
     const renderViewProposalsTab = () => {
       if(loading){
         return (
-          <div className={styles.description}>
+          <div className={styles.loading}>
             Loading... Waiting for transaction...
           </div>
         );
@@ -823,7 +808,7 @@ export default function Home() {
           }
 
           return(
-          <div  key={key} className={styles.prop}>
+          <div key={key} className={styles.prop}>
             <div className={styles.prop_id}> Proposal # {proposal.id.toString()}</div>
             <p className={styles.prop_title}> Title : <b>{proposal.titre}</b></p>
             <span className={styles.prop_status}> Status : <b>{status}</b></span>
