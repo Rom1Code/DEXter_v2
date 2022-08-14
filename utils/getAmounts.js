@@ -68,7 +68,7 @@ export const getLPTokensBalance = async (provider, address) => {
   }
 };
 
-
+// getDexTokenBalance: retrieve the amount of DEX token in the account of 'walletAddress'
 export const getDexTokenBalance = async (provider, walletAddress) => {
   try {
     const exchangeContract = new Contract(
@@ -83,6 +83,7 @@ export const getDexTokenBalance = async (provider, walletAddress) => {
   }
 };
 
+// getEthinPool: retrieve the amount of ETH in the pool
 export const getEthinPool = (listPools, tokenAddress) => {
   const balance = 0;
   for(var i =0; i < listPools.length; i++) {
@@ -93,6 +94,7 @@ export const getEthinPool = (listPools, tokenAddress) => {
   return balance;
 }
 
+// getTokeninPool: retrieve the amount of token in the pool
 export const getTokeninPool = (listPools, tokenAddress) => {
   const balance = 0;
   for(var i =0; i < listPools.length; i++) {

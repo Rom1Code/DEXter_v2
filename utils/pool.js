@@ -80,7 +80,6 @@ export const calculateToken = async (
 */
 export const removeLiquidity = async (signer, removeLPTokensWei, poolId, tokenAddress) => {
   // Create a new instance of the exchange contract
-
   const exchangeContract = new Contract(
     EXCHANGE_CONTRACT_ADDRESS,
     EXCHANGE_CONTRACT_ABI,
@@ -125,18 +124,21 @@ export const getTokensAfterRemove = async (
     };
 };
 
+// get and return the number of pool that exist
 export const getNbPool = async (provider) => {
+  // Create a new instance of the exchange contract
   const exchangeContract = new Contract(
     EXCHANGE_CONTRACT_ADDRESS,
     EXCHANGE_CONTRACT_ABI,
     provider);
-    //console.log(await exchangeContract.name())
   const nbPool= await exchangeContract.nbPool();
   return nbPool;
 }
 
 
+//get and return multiple data from the DAO contract
 export const fetchAllPools = async (provider, nbPool, walletAddress) => {
+  // Create a new instance of the exchange contract
   const exchangeContract = new Contract(
     EXCHANGE_CONTRACT_ADDRESS,
     EXCHANGE_CONTRACT_ABI,
@@ -144,28 +146,32 @@ export const fetchAllPools = async (provider, nbPool, walletAddress) => {
   const listPoolsWithLP = [];
   const listPools = [];
   const listLPToken = []
+  // we push 0 in the first entry because we want to match the entry with the id of the proposal
   listLPToken.push(0)
   const balanceOfTokens = []
+  // we push 0 in the first entry because we want to match the entry with the id of the proposal
   balanceOfTokens.push(0)
 
   for(var i=1; i<=nbPool; i++){
-    //we save the pool with liquidity in listPools in order to display only
-    //token with liquidty for the swap
+    // call pools getter and save each occurrence in listPools
     const tempPool = await exchangeContract.pools(i)
     listPools.push(tempPool);
 
+    //we save the pool with liquidity in listPoolsWithLP in order to display only
+    //token with liquidty for the swap
     if(tempPool.tokenReservedBalance != 0) {
     listPoolsWithLP.push(tempPool);
     }
     //we save the LP token for the pool in which the user add liquidity
     const tempLP = await exchangeContract.nbLPbyPool(i, walletAddress)
     listLPToken.push(tempLP)
-
+    // Create a new instance of the ERC20 contract with the address of the token for each pool
     const tokenContract = new Contract(
       tempPool.tokenAddress,
       TOKEN_CONTRACT_ABI,
       provider
     );
+    // get the user balance for token in each pool
     const tempBalance = await tokenContract.balanceOf(walletAddress);
     balanceOfTokens.push(tempBalance)
 
