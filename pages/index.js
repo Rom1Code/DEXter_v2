@@ -160,8 +160,8 @@ export default function Home() {
     const displayListToken = () => {
       return (
       // return the symbol of the token in the select list
-      listPoolsWithLP.map((pool, key) => (
-        <option key="key" value={pool.tokenAddress}>{pool.symbol}</option>)
+      listPoolsWithLP.map((pool, index) => (
+        <option  value={pool.tokenAddress}>{pool.symbol}</option>)
       ))
     }
 
@@ -174,7 +174,7 @@ export default function Home() {
         <span className={styles.logo_token}>
         {listPoolsWithLP.map((pool, key) =>
         pool.tokenAddress == selectedSwapToken ?
-          (<Image key="key" src={"/"+pool.symbol +".png"} height='32' width='32' alt="lux"/>)
+          (<Image src={"/"+pool.symbol +".png"} height='32' width='32' alt="lux"/>)
         :
            (null)
         )}
@@ -1030,7 +1030,7 @@ export default function Home() {
               {
                 listBalanceOfTokens.map((token, index) => (
                   (!hideZeroBalance || token != 0) && index !=0 ? (
-                    <p className={styles.balance_dash}><Image key={index} src={"/" + listPools[index-1].symbol + ".png"} height='32' width='32' alt="eth"/> {listPools[index-1].symbol} : {utils.formatEther(token).substring(0,10)}</p>
+                    <p key={index} className={styles.balance_dash}><Image src={"/" + listPools[index-1].symbol + ".png"} height='32' width='32' alt="eth"/> {listPools[index-1].symbol} : {utils.formatEther(token).substring(0,10)}</p>
                   )
                   :
                   (null)
