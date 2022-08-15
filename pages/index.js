@@ -143,7 +143,7 @@ export default function Home() {
       return (
       // return the symbol of the token in the select list
       listPoolsWithLP.map((pool, index) => (
-        <option  value={pool.tokenAddress}>{pool.symbol}</option>)
+        <option key="index" value={pool.tokenAddress}>{pool.symbol}</option>)
       ))
     }
 
