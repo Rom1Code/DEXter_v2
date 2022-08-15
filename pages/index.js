@@ -1,8 +1,9 @@
-import { BigNumber, providers, utils } from "ethers";
+import { BigNumber, providers, utils } from "Ethers";
+
 import Head from "next/head";
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from "react";
-import Web3Modal from "web3modal";
+import Web3Modal from "Web3modal";
 import styles from "../styles/Home.module.css";
 import {
   addLiquidity,

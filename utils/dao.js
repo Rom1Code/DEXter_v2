@@ -1,4 +1,4 @@
-import { Contract } from "ethers";
+import { Contract } from "Ethers";
 import {
   DAO_CONTRACT_ABI,
   DAO_CONTRACT_ADDRESS,

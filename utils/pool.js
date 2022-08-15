@@ -1,4 +1,4 @@
-import { Contract, utils } from "ethers";
+import { Contract, utils } from "Ethers";
 import {
   EXCHANGE_CONTRACT_ABI,
   EXCHANGE_CONTRACT_ADDRESS,
