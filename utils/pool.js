@@ -137,12 +137,15 @@ export const getNbPool = async (provider) => {
 
 
 //get and return multiple data from the DAO contract
-export const fetchAllPools = async (provider, nbPool, walletAddress) => {
+export const fetchAllPools = async (provider, address) => {
   // Create a new instance of the exchange contract
   const exchangeContract = new Contract(
     EXCHANGE_CONTRACT_ADDRESS,
     EXCHANGE_CONTRACT_ABI,
     provider);
+  // retrieve the number pools that exist
+  const _nbPool= await getNbPool(provider);
+
   const listPoolsWithLP = [];
   const listPools = [];
   const listLPToken = []
@@ -152,7 +155,7 @@ export const fetchAllPools = async (provider, nbPool, walletAddress) => {
   // we push 0 in the first entry because we want to match the entry with the id of the proposal
   balanceOfTokens.push(0)
 
-  for(var i=1; i<=nbPool; i++){
+  for(var i=1; i<=parseInt(_nbPool); i++){
     // call pools getter and save each occurrence in listPools
     const tempPool = await exchangeContract.pools(i)
     listPools.push(tempPool);
@@ -160,10 +163,12 @@ export const fetchAllPools = async (provider, nbPool, walletAddress) => {
     //we save the pool with liquidity in listPoolsWithLP in order to display only
     //token with liquidty for the swap
     if(tempPool.tokenReservedBalance != 0) {
+
     listPoolsWithLP.push(tempPool);
     }
+
     //we save the LP token for the pool in which the user add liquidity
-    const tempLP = await exchangeContract.nbLPbyPool(i, walletAddress)
+    const tempLP = await exchangeContract.nbLPbyPool(i, address)
     listLPToken.push(tempLP)
     // Create a new instance of the ERC20 contract with the address of the token for each pool
     const tokenContract = new Contract(
@@ -172,7 +177,7 @@ export const fetchAllPools = async (provider, nbPool, walletAddress) => {
       provider
     );
     // get the user balance for token in each pool
-    const tempBalance = await tokenContract.balanceOf(walletAddress);
+    const tempBalance = await tokenContract.balanceOf(address);
     balanceOfTokens.push(tempBalance)
 
   }

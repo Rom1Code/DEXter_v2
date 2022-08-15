@@ -4,13 +4,6 @@ import Image from 'next/image';
 import React, { useEffect, useRef, useState } from "react";
 import Web3Modal from "web3modal";
 import styles from "../styles/Home.module.css";
-
-import {
-  ROMAIN_TOKEN_ADDRESS,
-  LUCILE_TOKEN_ADDRESS,
-  TOKEN_CONTRACT_ABI,
-
-} from "../constants";
 import {
   addLiquidity,
   removeLiquidity,
@@ -51,10 +44,6 @@ export default function Home() {
   const [dexBalance, setDexBalance] = useState(zero);
   //keep track of ETH balance
   const [ethBalance, setEtherBalance] = useState(zero);
-  //keep track of the balance of LUX token
-  const [lucileBalance, setLucileBalance] = useState(zero);
-  //keep track of the balance of ROM token
-  const [romainBalance, setRomainBalance] = useState(zero);
   //keep track of the balance of ETH in the contract
   // NOT USED CURRENTLY
   const [etherBalanceContract, setEtherBalanceContract] = useState(zero);
@@ -131,20 +120,13 @@ export default function Home() {
         const _dexBalance = await getDexTokenBalance(provider, address);
         // get the amount of eth in the user's account
         const _ethBalance = await getEtherBalance(provider, address);
-        // get the amount of `Crypto Dev` tokens held by the user
-        const _lucileBalance = await getTokensBalance(provider, address, LUCILE_TOKEN_ADDRESS);
-        // get the amount of `Crypto Dev` tokens held by the user
-        const _romainBalance = await getTokensBalance(provider, address, ROMAIN_TOKEN_ADDRESS);
         // Get the ether reserves in the contract
         const _ethBalanceContract = await getEtherBalance(provider, null, true);
 
         setDexBalance(_dexBalance);
         setEtherBalance(_ethBalance);
-        setLucileBalance(_lucileBalance);
-        setRomainBalance(_romainBalance);
         setEtherBalanceContract(_ethBalanceContract);
         setInputBalance(_ethBalance);
-        console.log(ethBalance.toString())
       } catch (err) {
         console.error(err);
       }
@@ -207,9 +189,11 @@ export default function Home() {
     */
   const _fetchAllPools = async () => {
     try{
-      const provider = await getProviderOrSigner()
+      const provider = await getProviderOrSigner(false);
+      const signer = await getProviderOrSigner(true);
+      const address = await signer.getAddress();
       // call the fetchAllPools function from the utils/pool.js folder
-      const [_listPools, _listBalanceOfTokens, _listLPToken, _listPoolsWithLP]  = await fetchAllPools(provider, nbPool, walletAddress)
+      const [_listPools, _listBalanceOfTokens, _listLPToken, _listPoolsWithLP]  = await fetchAllPools(provider, address)
       setListPools(_listPools)
       setListBalanceOfTokens(_listBalanceOfTokens)
       setListLPToken(_listLPToken)
@@ -388,15 +372,19 @@ export default function Home() {
     /**
      * swapBalance: inverse balance after click on the arrow
      */
-    const swapBalance = () => {
+    const swapBalance = async () => {
+      const provider = await getProviderOrSigner(false);
+      const balance = await getTokensBalance(provider, walletAddress, listPools[0].tokenAddress);
+
        if(!ethSelected){
          setInputBalance(ethBalance);
-         setOutputBalance(lucileBalance);
+         setOutputBalance(balance)
        }
        else{
-         setInputBalance(lucileBalance);
          setOutputBalance(ethBalance);
+         setInputBalance(balance)
        }
+       setSelectedSwapToken(listPools[0].tokenAddress)
    }
 
    /**
@@ -424,20 +412,30 @@ export default function Home() {
     */
    const _createProposal = async () => {
      try {
+       const provider = await getProviderOrSigner()
        const signer = await getProviderOrSigner(true)
+
        // get the values from the differents fields
        var proptitle = document.getElementById("propTitle").value
        var propDesc = document.getElementById("propDesc").value
        var propTokenAddress = document.getElementById("propTokenAddress").value
        var propDeadline = document.getElementById("propDeadline").value
 
-       setLoading(true);
-       await createProposal(signer, proptitle, propDesc, propDeadline, propTokenAddress )
-       // call _getNbProposal in order to update the nb of proposal
-       await _getNbProposal()
-       // call _fetchAllPools in order to update the differents list
-       await _fetchAllPools()
-       setLoading(false);
+       const isERC20 = await getTokensBalance(provider, walletAddress, propTokenAddress, )
+       console.log("is erc20 ", isERC20)
+       if (isERC20 != undefined) {
+         setLoading(true);
+         await createProposal(signer, proptitle, propDesc, propDeadline, propTokenAddress )
+         // call _getNbProposal in order to update the nb of proposal
+         await _getNbProposal()
+         // call _fetchAllPools in order to update the differents list
+         await _fetchAllPools()
+         setLoading(false);
+      }
+      else {
+        window.alert("Token address is not an ERC20 token");
+        throw new Error("Not an ERC20 address");
+      }
      } catch (err) {
        console.error(err);
      }
@@ -481,11 +479,7 @@ export default function Home() {
      try {
        const provider = await getProviderOrSigner()
        const _nbProposal = await getNbProposal(provider);
-       console.log(_nbProposal)
-
        setNbProposal(_nbProposal)
-       console.log("after set",nbProposal)
-
      } catch (err) {
        console.error(err);
      }
@@ -1004,19 +998,6 @@ export default function Home() {
       /**
       * render the dashboard
       */
-      const renderDashBoard = () => {
-        return (
-          <div className={styles.recap}>
-            <div className={styles.portfolio}>
-              <p className={styles.title}>Portfolio</p>
-              <p className={styles.balance_dash}><Image src="/ETH.png" height='32' width='32' alt="eth"/> Ether : {utils.formatEther(ethBalance).substring(0,10)}</p>
-              <p className={styles.balance_dash}> <Image src="/LUX.jpg" height='32' width='32' alt="lux"/> Lucile Token : {utils.formatEther(lucileBalance).substring(0,10)}</p>
-              <p className={styles.balance_dash}><Image src="/ROM.png" height='32' width='32' alt="rom"/> Romain Token : {utils.formatEther(romainBalance).substring(0,10)}</p>
-              <p className={styles.balance_dash}><Image src="/DEX.png" height='32' width='32' alt="dex"/> DEX Token : {utils.formatEther(dexBalance).substring(0,10)}</p>
-            </div>
-           </div>
-        )
-      }
 
       const renderDashBoard_v2 = () => {
         if(listBalanceOfTokens !=0 )
@@ -1109,29 +1090,12 @@ export default function Home() {
   // Used to re-fetch all proposals in the DAO when user switches
   // to the 'Pool' tab
   useEffect(() => {
-    if (currentPage==="Dashboard") {
+    if (currentPage!="Dashboard") {
       _getNbPool();
       _fetchAllPools();
     }
   }, [currentPage]);
 
-  // Used to re-fetch all proposals in the DAO when user switches
-  // to the 'Pool' tab
-  useEffect(() => {
-    if (currentPage==="Pool") {
-      _getNbPool();
-      _fetchAllPools();
-    }
-  }, [currentPage]);
-
-  // Used to re-fetch all pools in the Swap when user switches
-  // to the 'Swap' tab
-  useEffect(() => {
-    if (currentPage==="Swap") {
-      _getNbPool();
-      _fetchAllPools();
-    }
-  }, [currentPage]);
 
   return (
     <div>

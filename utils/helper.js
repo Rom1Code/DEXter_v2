@@ -17,7 +17,6 @@ export const timeConverter = (UNIX_timestamp) => {
 // dsiplay the progressBar
 export const progressBar = (yes,total) => {
   const pourcentage = (yes / total) * 100
-  console.log("pourcentage",pourcentage)
   if(pourcentage <= 25) {
     return <div className={styles.progress_0}>.</div>
   }
