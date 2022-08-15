@@ -1,4 +1,7 @@
 import { BigNumber, providers, utils } from "ethers";
+import { Doughnut } from 'react-chartjs-2'
+import { Chart, ArcElement } from 'chart.js'
+Chart.register(ArcElement);
 
 import Head from "next/head";
 import Image from 'next/image';
@@ -24,6 +27,40 @@ import {
 import { swapTokens, getAmountOfTokensReceivedFromSwap } from "../utils/swap";
 import { createProposal, voteForProposal, fetchAllProposals, getNbProposal, executeProposal } from "../utils/dao";
 import { progressBar, timeConverter } from "../utils/helper";
+
+const data = {
+ labels : ['Yes', 'No'],
+ datasets: [{
+ label: 'Doughnut chart',
+ data: [75, 25],
+ backgroundColor: [
+ 'rgba(60, 179, 113, 0.2)',
+ 'rgba(255, 99, 132, 0.2)',
+
+        ],
+ borderColor: [
+ 'rgb(60, 179, 113)',
+ 'rgb(255, 99, 132)',
+
+        ],
+ borderWidth: 1,
+ hoverBorderWidth: 2,
+ hoverBorderColor: [
+ 'rgb(60, 179, 113)',
+ 'rgb(255, 99, 132)'],
+    }]
+};
+
+const options = {
+  element: {
+    arc: {
+      weight: 0.5,
+      borderWidth: 3,
+      maintainAspectRatio: false
+    },
+  },
+  cutout: 40,
+}
 
 
 export default function Home() {
@@ -894,7 +931,7 @@ export default function Home() {
           {
             status = "In Progress"
             endDate = timeConverter(proposal.deadline.toString())
-            button = <div className="col text-end"><input onClick={(event) => {_voteForProposal(proposal.id, "No")}}
+            button = <div className={styles.div_btn}><input onClick={(event) => {_voteForProposal(proposal.id, "No")}}
                               className={styles.btn_no} type="button" value="No" />
                            <input onClick={(event) => {_voteForProposal(proposal.id, "Yes")}}
                               className={styles.btn_yes} type="button" value="Yes" /></div>
@@ -903,35 +940,41 @@ export default function Home() {
           {
             status = "In Progress"
             endDate = timeConverter(proposal.deadline.toString())
-            button = <div className="col text-end"><input onClick={(event) => {}}
+            button = <div className={styles.div_btn}><input onClick={(event) => {}}
                               className={styles.btn_already_voted} type="button" id="half" value="Already Vote" disabled /></div>
           }
           else if(proposal.yes.toString()> proposal.no.toString() && (proposal.deadline.toString() <  Math.round(new Date()/1000)) && !proposal.isExecuted )
           {
-            status = <span className="text-success font-weight-bold">Passed</span>
+            status = <span className={styles.div_btn}>Passed</span>
             endDate = "Finished"
-            button = <div className="col text-end"><input className={styles.btn_execute} type="button" value="Execute" onClick = { () => _executeProposal(proposal.id.toString())} /></div>
+            button = <div className={styles.btn_execute}><input className="" type="button" value="Execute" onClick = { () => _executeProposal(proposal.id.toString())} /></div>
           }
           else if (proposal.isExecuted){
             status = "Executed"
             endDate = "Finished"
-            button = <div className="col text-end"><input onClick={(event) => {}}
+            button = <div className={styles.div_btn}><input onClick={(event) => {}}
                               className={styles.btn_voting_end} type="button" value="Executed" disabled /></div>
           }
           else {
             status = "Rejected"
             endDate = "Finished"
-            button = <div className="col text-end"><input onClick={(event) => {}}
+            button = <div className={styles.div_btn}><input onClick={(event) => {}}
                               className={styles.btn_voting_end} type="button" value="Rejected" disabled /></div>
           }
 
           // display the detail of the prop
           if(propDetails==true && currentPropDetails === proposal.id.toString()){
             detailsView = <div className={styles.details}>
-              <p className={styles.createby}>Created by : {proposal.createdBy.toString()}</p>
-              <p className={styles.prop_desc2}> Description : {proposal.description.toString()}</p>
+              <p className={styles.createby}>Voting Starts : {timeConverter(proposal.createcAt)}</p>
+              <p className={styles.createby}>Voting Ends : {timeConverter(proposal.deadline)}</p>
               <p className={styles.yes}>Yes : {utils.formatEther(proposal.yes)}</p>
               <p className={styles.no}>No : {utils.formatEther(proposal.no)}</p>
+              <div className={styles.dougnut}>
+              <Doughnut data={data} options={options} width={100} height={100}/>
+              </div>
+              <p className={styles.prop_desc2}> Description : {proposal.description.toString()}</p>
+
+
               {button}
               </div>
           }
@@ -941,8 +984,8 @@ export default function Home() {
             <div className={styles.prop_id}> Proposal # {proposal.id.toString()}</div>
             <p className={styles.prop_title}> Title : <b>{proposal.titre}</b></p>
             <span className={styles.prop_status}> Status : <b>{status}</b></span>
-              {progressBar(proposal.yes.toString(),(parseInt(proposal.yes)+parseInt(proposal.no)).toString())}
-            <p className={styles.enddate}> End time : {endDate}</p>
+            <br/>
+            <span className={styles.enddate}> End time : {endDate}</span>
             {propDetails && currentPropDetails == proposal.id.toString()?  (
               <center><button className={styles.prop_detail} onClick= {(e)=>{ setPropDetails(false) ; setCurrentPropDetails(proposal.id.toString())}}>Hide details</button><br/></center>
             ) :  (
@@ -965,7 +1008,11 @@ export default function Home() {
           return renderCreateProposalTab();
         }
       else if (selectedDAOTab === "view") {
-          return renderViewProposalsTab();
+          return (
+            <div className={styles.p_form}>
+              {renderViewProposalsTab()}
+            </div>
+          )
         }
         return null;
       }
@@ -1119,6 +1166,11 @@ export default function Home() {
   </div>
   <footer className={styles.footer}>
     Made with &#10084; by Crypto Rom1
+    <button className={styles.btn_telegram_footer} type="button" onClick={ (e) => window.location.href="https://t.me/romain_invest"}><Image src="/telegram.png" height='50' width='50' alt="telegram"/></button>
+    <button className={styles.btn_twitter_footer} type="button" onClick={ (e) => window.location.href="https://twitter.com/CryptoRomain"}><Image src="/twitter.png" height='50' width='50' alt="github"/></button>
+    <button className={styles.btn_linkedn_footer} type="button" onClick={ (e) => window.location.href="https://www.linkedin.com/in/romain-noeppel-9a2132162/"}><Image src="/linkedn.png" height='50' width='50' alt="linkedn"/></button>
+    <button className={styles.btn_footer} type="button" onClick={ (e) => window.location.href="https://github.com/Rom1Code/DEXter_v2"}><Image src="/github.png" height='50' width='50' alt="github"/></button>
+    <p>Thanks to <a href="https://learnweb3.io/"> LearnWeb3.io</a></p>
   </footer>
 </div>
 

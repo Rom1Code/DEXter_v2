@@ -89,9 +89,64 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
 
 
 .footer {
+  color: white;
   text-align: center;
+  background-color: rgba(0,112,218,1);
+  border-bottom: 1px solid white;
+  font-weight: bold;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  justify-content: center;
+
 }
 
+.btn_footer {
+  width: 40px;
+  height:40px;
+  border-radius: 10px;
+  border: none;
+  margin-left: 5px
+}
+.btn_twitter_footer {
+  width: 40px;
+  height:40px;
+  border-radius: 10px;
+  border: none;
+  margin-left: 5px;
+  background-color: #1DA1F2
+}
+
+.btn_telegram_footer {
+  width: 40px;
+  height:40px;
+  border-radius: 10px;
+  border: none;
+  margin-left: 5px;
+  background-color: #0088cc
+}
+
+.btn_linkedn_footer {
+  width: 40px;
+  height:40px;
+  border-radius: 10px;
+  border: none;
+  margin-left: 5px;
+  background-color: #0088cc
+}
+
+.btn_linkedn_footer {
+  width: 40px;
+  height:40px;
+  border-radius: 10px;
+  border: none;
+  margin-left: 5px;
+  background-color: #0e76a8
+}
+
+.btn_footer:hover, .btn_twitter_footer:hover, .btn_telegram_footer:hover,
+.btn_linkedn_footer:hover {
+  background-color: grey
+}
 
 /* DASHBOARD */
 
@@ -332,6 +387,10 @@ box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
   margin-bottom: 25px;
 }
 
+.p_form{
+  float: flex;
+    clear: none;
+}
 
 .create_prop_title {
   background-image: radial-gradient(   rgba(15,27,49,1) 0%, rgba(0,112,218,1) 100% );
@@ -375,52 +434,6 @@ box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
   padding: 5px;
 }
 
-.progress_0 {
-  margin-top: 5px;
-  margin-bottom :-15px;
-  width: 98%;
-  margin-left:  1%;
-  border: 1px solid black;
-  color: white
-}
-
-.progress_25 {
-  margin-top: 5px;
-  margin-bottom :-15px;
-  width: 25%;
-  margin-left:  1%;
-  background-color: green;
-  color : green;
-}
-
-.progress_50 {
-  margin-top: 5px;
-  margin-bottom :-15px;
-  width: 50%;
-  margin-left:  1%;
-  background-color: green;
-  color : green;
-}
-
-.progress_75 {
-  margin-top: 5px;
-  margin-bottom :-15px;
-  width: 75%;
-  margin-left:  1%;
-  background-color: green;
-  color : green;
-}
-
-.progress_100 {
-  margin-top: 5px;
-  margin-bottom :-15px;
-  background-color: green;
-  width: 98%;
-  color : green;
-  margin-left:  1%;
-}
-
-
 .prop_title {
   margin-bottom: 0px;
   font-size: 20px
@@ -442,6 +455,16 @@ box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
 .createby, .yes, .no {
   color: white;
 }
+
+ .yes {
+  color: rgb(60, 179, 113);
+  padding-top: 35px
+}
+
+ .no {
+  color: rgb(255, 99, 132);
+}
+
  .btn_create_prop, .btn_view_prop {
    color: white;
    border-radius: 10px;
@@ -453,6 +476,10 @@ box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
    margin-left: 10px;
    padding : 5px
  }
+
+.div_btn {
+  text-align: right;
+}
 
 .btn_yes, .btn_no, .btn_execute {
   color: white;
@@ -478,9 +505,11 @@ box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
 }
 
 .btn_voting_end, .btn_already_voted {
-  color: grey;
-  border-radius: 10%;
-  font-size: 15px;
+  color: white;
+  border-radius: 10px;
+  border: none;
+  padding : 5px;
+  font-size: 20px;
   margin-bottom: 5px;
   margin-left: 2px;
 }
@@ -531,8 +560,9 @@ box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
   border-bottom-right-radius: 10px
 }
 
-.progress {
-  border: 1px solid black;
-  height: 20px;
-  color: black
+.dougnut {
+  width :30%;
+  height :30%;
+  margin-left:35%;
+  margin-top: -100px
 }
