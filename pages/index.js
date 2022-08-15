@@ -28,39 +28,6 @@ import { swapTokens, getAmountOfTokensReceivedFromSwap } from "../utils/swap";
 import { createProposal, voteForProposal, fetchAllProposals, getNbProposal, executeProposal } from "../utils/dao";
 import { progressBar, timeConverter } from "../utils/helper";
 
-const data = {
- labels : ['Yes', 'No'],
- datasets: [{
- label: 'Doughnut chart',
- data: [75, 25],
- backgroundColor: [
- 'rgba(60, 179, 113, 0.2)',
- 'rgba(255, 99, 132, 0.2)',
-
-        ],
- borderColor: [
- 'rgb(60, 179, 113)',
- 'rgb(255, 99, 132)',
-
-        ],
- borderWidth: 1,
- hoverBorderWidth: 2,
- hoverBorderColor: [
- 'rgb(60, 179, 113)',
- 'rgb(255, 99, 132)'],
-    }]
-};
-
-const options = {
-  element: {
-    arc: {
-      weight: 0.5,
-      borderWidth: 3,
-      maintainAspectRatio: false
-    },
-  },
-  cutout: 40,
-}
 
 
 export default function Home() {
@@ -927,6 +894,40 @@ export default function Home() {
         <div>
         {listProposals.reverse().map(function(proposal, key) {
           let status, endDate, button, detailsView
+          const data = {
+           labels : ['Yes', 'No'],
+           datasets: [{
+           label: 'Doughnut chart',
+           data: [proposal.yes.toString(), proposal.no.toString()],
+           backgroundColor: [
+           'rgba(60, 179, 113, 0.2)',
+           'rgba(255, 99, 132, 0.2)',
+
+                  ],
+           borderColor: [
+           'rgb(60, 179, 113)',
+           'rgb(255, 99, 132)',
+
+                  ],
+           borderWidth: 1,
+           hoverBorderWidth: 2,
+           hoverBorderColor: [
+           'rgb(60, 179, 113)',
+           'rgb(255, 99, 132)'],
+              }]
+          };
+
+          const options = {
+            element: {
+              arc: {
+                weight: 0.5,
+                borderWidth: 3,
+                maintainAspectRatio: false
+              },
+            },
+            cutout: 40,
+          }
+
           if((proposal.deadline.toString() >  Math.round(new Date()/1000)) && !listHasVoted[proposal.id.toString()] )
           {
             status = "In Progress"
@@ -1158,6 +1159,8 @@ export default function Home() {
         <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Swap")}}>Swap</button>
         <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Pool")}}>Pool</button>
         <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Gouvernance")}}>DAO</button>
+        <a href="https://rinkebyfaucet.com/" target="_blank"><button className={styles.btn_navbar}>Faucet</button></a>
+
         {renderButtonConnect()}
     </div>
     <div className={styles.page}>
@@ -1166,10 +1169,10 @@ export default function Home() {
   </div>
   <footer className={styles.footer}>
     Made with &#10084; by Crypto Rom1
-    <button className={styles.btn_telegram_footer} type="button" onClick={ (e) => window.location.href="https://t.me/romain_invest"}><Image src="/telegram.png" height='50' width='50' alt="telegram"/></button>
-    <button className={styles.btn_twitter_footer} type="button" onClick={ (e) => window.location.href="https://twitter.com/CryptoRomain"}><Image src="/twitter.png" height='50' width='50' alt="github"/></button>
-    <button className={styles.btn_linkedn_footer} type="button" onClick={ (e) => window.location.href="https://www.linkedin.com/in/romain-noeppel-9a2132162/"}><Image src="/linkedn.png" height='50' width='50' alt="linkedn"/></button>
-    <button className={styles.btn_footer} type="button" onClick={ (e) => window.location.href="https://github.com/Rom1Code/DEXter_v2"}><Image src="/github.png" height='50' width='50' alt="github"/></button>
+    <a href="https://t.me/romain_invest" target="_blank"><button className={styles.btn_telegram_footer} type="button"><Image src="/telegram.png" height='50' width='50' alt="telegram"/></button></a>
+    <a href="https://twitter.com/CryptoRomain" target="_blank"><button className={styles.btn_twitter_footer} type="button"><Image src="/twitter.png" height='50' width='50' alt="twitter"/></button></a>
+    <a href="https://www.linkedin.com/in/romain-noeppel-9a2132162/" target="_blank"><button className={styles.btn_linkedn_footer} type="button"><Image src="/linkedn.png" height='50' width='50' alt="linkedn"/></button></a>
+    <a href="https://github.com/Rom1Code/DEXter_v2" target="_blank"><button className={styles.btn_footer} type="button"><Image src="/github.png" height='50' width='50' alt="github"/></button></a>
     <p>Thanks to <a href="https://learnweb3.io/"> LearnWeb3.io</a></p>
   </footer>
 </div>
