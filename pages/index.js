@@ -468,8 +468,11 @@ export default function Home() {
     */
    const _fetchAllProposals = async () => {
      try{
-       const provider = await getProviderOrSigner()
-       const [_listProposals, _listHasVoted] = await fetchAllProposals(provider, walletAddress, nbProposal)
+       const provider = await getProviderOrSigner(false);
+       const signer = await getProviderOrSigner(true);
+       const address = await signer.getAddress();
+
+       const [_listProposals, _listHasVoted] = await fetchAllProposals(provider, address)
        setListProposals(_listProposals)
        setListHasVoted(_listHasVoted)
      } catch (err) {
@@ -588,7 +591,7 @@ export default function Home() {
       else {
         return (
           <center>
-          <div>
+          <div className={styles.main_pool}>
           {listPools.map((pool,key)=> (
 
             <div key={key} className={styles.pool}>
@@ -891,7 +894,8 @@ export default function Home() {
       }
       else  {
           return (
-        <div>
+
+        <div className={styles.main_proposal}>
         {listProposals.reverse().map(function(proposal, key) {
           let status, endDate, button, detailsView
           const data = {
@@ -988,9 +992,9 @@ export default function Home() {
             <br/>
             <span className={styles.enddate}> End time : {endDate}</span>
             {propDetails && currentPropDetails == proposal.id.toString()?  (
-              <center><button className={styles.prop_detail} onClick= {(e)=>{ setPropDetails(false) ; setCurrentPropDetails(proposal.id.toString())}}>Hide details</button><br/></center>
+              <center><button className={styles.btn_prop_detail} onClick= {(e)=>{ setPropDetails(false) ; setCurrentPropDetails(proposal.id.toString())}}>Hide details</button><br/></center>
             ) :  (
-              <center><button className={styles.prop_detail} onClick= {(e)=>{ setPropDetails(true); setCurrentPropDetails(proposal.id.toString())}}>View details</button><br/></center>
+              <center><button className={styles.btn_prop_detail} onClick= {(e)=>{ setPropDetails(true); setCurrentPropDetails(proposal.id.toString())}}>View details</button><br/></center>
             )}
              {detailsView}
           </div>
@@ -1049,6 +1053,7 @@ export default function Home() {
       */
 
       const renderDashBoard_v2 = () => {
+        console.log(listProposals)
         if(listBalanceOfTokens !=0 )
         {
         return (
@@ -1067,6 +1072,36 @@ export default function Home() {
               )
             )}
             </div>
+            <div className={styles.portfolio}>
+              <p className={styles.title}>LP</p>
+              {
+                listLPToken.map((token, index) => (
+                  index!=0 && token != 0? (
+                    <p key={index} className={styles.balance_dash}>Pool {listPools[index-1].symbol}/ETH : {utils.formatEther(token)}</p>)
+                  :
+                   (null)
+              )
+            )}
+
+            </div>
+            <div className={styles.reward}>
+              <p className={styles.title}>Reward</p>
+              <p className={styles.balance_dash}> DEX : {utils.formatEther(dexBalance).substring(0,10)}</p>
+            </div>
+
+            <div className={styles.main_active_proposal}>
+              <div className={styles.main_active_proposal_title}>Active proposals</div>
+              {
+                listProposals.map((props, index) => (
+                  <div className={styles.active_propsal}>
+                    <p>Proposal {props.id.toString()}</p>
+                    <p>Title {props.titre}</p>
+                  </div>
+
+                ))
+              }
+            </div>
+
            </div>
         )
       }
@@ -1120,6 +1155,7 @@ export default function Home() {
       _getNbProposal();
       _getNbPool();
       _fetchAllPools();
+      _fetchAllProposals();
       getAmounts();
     }
 

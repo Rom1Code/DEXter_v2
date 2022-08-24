@@ -151,18 +151,64 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
 /* DASHBOARD */
 
 .recap {
+  display:flex;
+  flex-wrap: wrap;
+  justify-content: center;
   margin-bottom: 70px;
-  padding-top: 50px
+  padding-top: 50px;
+
 }
 
-.portfolio,.staking, .reward {
+.portfolio, .reward {
 width: 20%;
 background-color: rgba(0,112,218,1);
-border-radius: 10%;
+border-radius: 10px;
 padding: 5px;
 margin-bottom: 10px;
-margin-left:  40%;
+margin-left:  5%;
 box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
+
+}
+
+.reward {
+width: 20%;
+background-color: rgba(0,112,218,1);
+border-radius: 10px;
+padding: 5px;
+margin-bottom: 10px;
+margin-left:  5%;
+box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
+height:150px
+}
+
+.main_active_proposal {
+  display:flex;
+  flex-wrap: wrap;
+  width: 60%;
+  background-color: rgba(0,112,218,1);
+  border-radius: 10px;
+  padding: 5px;
+  margin-top: 50px;
+  margin-bottom: 10px;
+  margin-left:  5%;
+  box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
+}
+.main_active_proposal_title {
+  width:100%;
+  font-size: 25px;
+  text-align: center;
+  font-weight: bold;
+  color : white;
+  margin-bottom: 20px
+}
+
+.active_propsal {
+  color: black;
+  background-color:white;
+  border-radius: 10px;
+  width: 30%;
+  margin-left: 2.5%;
+  margin-bottom: 2.5%;
 
 }
 
@@ -181,12 +227,18 @@ box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
 
 
 /* POOL */
-
+.main_pool {
+  display:flex;
+  flex-wrap: wrap;
+  width:60%
+}
 .pool {
   text-align: center;
   margin-top:50px;
+  margin-left: 5%;
+  margin-right: 5%;
   background-image: radial-gradient(   rgba(15,27,49,1) 0%, rgba(0,112,218,1) 100% );
-  width: 30%;
+  width: 40%;
   margin-bottom: 20px;
   border-radius: 10px;
   padding-top: 1px;
@@ -378,13 +430,19 @@ box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
   background-image: radial-gradient(   rgba(15,27,49,1) 0%, rgba(0,112,218,1) 100% );
 }
 
+.main_proposal {
+  display:flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .prop {
-  margin-top: 25px;
+  margin-top: 50px;
   width: 30%;
-  margin-left: 35%;
+  margin-left: 2.5%;
+  margin-right: 2.5%;
   background-color: white;
   border-radius: 10px;
-  margin-bottom: 25px;
 }
 
 .p_form{
@@ -531,20 +589,21 @@ box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
 .btn_yes:hover, .btn_no:hover, .btn_create:hover {background: white; color:#0093E9 }
 
 
-.prop_detail {
+.btn_prop_detail {
   color: white;
   font-weight: bold;
   border-radius: 10px;
   border: none;
   padding: 5px;
   font-size: 20px;
+  margin-top: 15px;
   margin-bottom: 15px;
   margin-left: 2px;
   background-color: rgba(0,112,218,1);
   box-shadow: 4px 12px 12px 1px rgba(0, 0, 0, .2);
 }
 
-.prop_detail:hover {
+.btn_prop_detail:hover {
   background: #eee;
   color:rgba(0,112,218,1);
   font-weight: bold;

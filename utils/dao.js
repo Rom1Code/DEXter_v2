@@ -19,12 +19,14 @@ export const createProposal = async (signer, titre, description, deadline, token
 };
 
 // get and return the list of proposals and the list of proposals for which the user has voted
-export const fetchAllProposals = async (provider, address, nbProposal) => {
+export const fetchAllProposals = async (provider, address) => {
   // Create a new instance of the DAO contract
   const daoContract = new Contract(
     DAO_CONTRACT_ADDRESS,
     DAO_CONTRACT_ABI,
     provider);
+
+  const nbProposal = await daoContract.nbProposal();
   const listProposals=[]
   const hasVotedForProposal=[]
   // we push 0 in the first entry because we want to match the entry with the id of the proposal
