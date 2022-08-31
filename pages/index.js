@@ -9,6 +9,9 @@ import React, { useEffect, useRef, useState } from "react";
 import Web3Modal from "web3modal";
 import styles from "../styles/Home.module.css";
 import {
+  DEX_TOKEN_ADDRESS
+} from "../constants";
+import {
   addLiquidity,
   removeLiquidity,
   calculateToken,
@@ -90,6 +93,9 @@ export default function Home() {
   const [propDetails, setPropDetails] = useState(false);
   //keep track in which proposal the user want to show details
   const [currentPropDetails, setCurrentPropDetails] = useState(0);
+
+  const [currentPoolDetails, setCurrentPoolDetails] = useState(0);
+
   // We have two tabs in this dapp, Create Tab and Views Tab. This variable
   // keeps track of which Tab the user is on. If it is set to true this means
   // that the user is on `Create` tab else he is on `Views` tab
@@ -122,7 +128,7 @@ export default function Home() {
         const address = await signer.getAddress();
 
         // get the amount of DEX token in the user's account
-        const _dexBalance = await getDexTokenBalance(provider, address);
+        const _dexBalance = await getTokensBalance(provider, address, DEX_TOKEN_ADDRESS);
         // get the amount of eth in the user's account
         const _ethBalance = await getEtherBalance(provider, address);
         // Get the ether reserves in the contract
@@ -161,7 +167,7 @@ export default function Home() {
         <span className={styles.logo_token}>
         {listPoolsWithLP.map((pool, key) =>
         pool.tokenAddress == selectedSwapToken ?
-          (<Image src={"/"+pool.symbol +".png"} height='32' width='32' alt="lux"/>)
+          (<Image className={styles.logo} src={"/"+pool.symbol +".png"} height='32' width='32' alt="lux"/>)
         :
            (null)
         )}
@@ -575,6 +581,7 @@ export default function Home() {
       * render pool tab
       */
     const renderPool = () => {
+      console.log(currentPoolDetails)
       if(loading){
         return (
           <div className={styles.loading}>
@@ -596,21 +603,21 @@ export default function Home() {
 
             <div key={key} className={styles.pool}>
                 <div>
-                <div className={styles.pool_title}>
-                  <div className={styles.pool_logo}>
+                <div className={styles.pool_title} onClick={(e) => setCurrentPoolDetails(pool.id.toString())}>
+                  <div className={styles.pool_logo} >
                     <Image src="/ETH.png" height='32' width='32' alt="eth"/>
                     <Image src={"/"+pool.symbol+".png"} height='32' width='32' alt="eth"/>
                   </div>
-                  <label className={styles.lbl_pool_title}>Pool {pool.symbol}/ETH </label>
+                  <label className={styles.lbl_pool_title}>{pool.symbol}/ETH </label><br/>
+                  <label className={styles.lbl_pool_title2}>Pool #{pool.id.toString()} </label>
                 </div>
-                  <p className={styles.balance}>ETH : {utils.formatEther(ethBalance).substring(0,10)}</p>
-                  <p className={styles.balance}>{pool.name} Token : {utils.formatEther((listBalanceOfTokens[pool.id])).substring(0,10)} </p>
-                  <p className={styles.balance}>Pool reserve {utils.formatEther(pool.tokenReservedBalance).substring(0,10)} {pool.symbol}/{utils.formatEther(pool.ethReservedBalance)} ETH :</p>
                 </div>
                   {/* if there is no liquidity, we display two input text, one for the number of ETH and
                   the other for the number of token we want to add in the pool in order to initialise the ratio*/}
                   {pool.lpBalance==0 ? (
                     <div >
+                    <p className={styles.balance}><label className={styles.lbl_pool_details}>ETH : </label>{utils.formatEther(ethBalance).substring(0,10)}</p>
+                    <p className={styles.balance}><label className={styles.lbl_pool_details}>{pool.name} Token : </label>{utils.formatEther((listBalanceOfTokens[pool.id])).substring(0,10)} </p>
                       <input
                         type="number"
                         placeholder="Amount of Ether"
@@ -632,10 +639,19 @@ export default function Home() {
                               Add</button>
                       </div>
                   )
-               : (
+               :
+                 currentPoolDetails == pool.id.toString() ? (
                  // else we display one input for the number of ETH you will add and the number of token
                  // will be calculate automatically
                  <div>
+                 <br/>
+                 <Image src="/ETH.png" height='32' width='32' alt="eth"/>
+                 <p className={styles.balance}><label className={styles.lbl_pool_details}>My amount : </label>{utils.formatEther(ethBalance).substring(0,10)} ETH</p>
+                 <p className={styles.balance}><label className={styles.lbl_pool_details}>Total amount : </label>{utils.formatEther(pool.ethReservedBalance)} ETH</p>
+                 <Image src={"/"+pool.symbol+".png"} height='32' width='32' alt="eth"/>
+
+                 <p className={styles.balance}><label className={styles.lbl_pool_details}>My amount : </label>{utils.formatEther((listBalanceOfTokens[pool.id])).substring(0,10)} {pool.symbol} </p>
+                 <p className={styles.balance}><label className={styles.lbl_pool_details}>Total amount : </label>{utils.formatEther(pool.tokenReservedBalance).substring(0,10)} {pool.symbol}</p>
                  <input
                    type="number"
                    placeholder="Amount of Ether"
@@ -663,8 +679,10 @@ export default function Home() {
                      className={styles.btn_add}>
                        Add</button>
                        <br/>
+                       {utils.formatEther(listLPToken[pool.id])!=0 ? (
+
                   <div className={styles.remove_liquidity}>
-                  <p className={styles.balance}>LP Token : {utils.formatEther(listLPToken[pool.id])} </p>
+                  <p className={styles.balance}><label className={styles.lbl_pool_details}>LP Token : </label>{utils.formatEther(listLPToken[pool.id])} </p>
                  <input
                    type="number"
                    placeholder="Amount of LP"
@@ -689,10 +707,11 @@ export default function Home() {
                      : (<p className={styles.lbl_get_remove}> You will get 0 {pool.name} and 0 Eth</p>)
                     }
                  </div>
+               ) : (null)}
                  </div>
-
-                  )}
-                  </div>
+               )
+               : (null)}
+                </div>
               ))}
               </div>
               </center>
@@ -753,7 +772,7 @@ export default function Home() {
               <select className={styles.selectList}name="inputList" id="inputTokenList" onChange={ (e)=> updateBalance(e.target.value)}>
                 {displayListToken()}
               </select> </span> )
-              : (<span className={styles.logo_eth}><Image src="/ETH.png" height='32' width='32' alt="eth"/><span className= {styles.lbl_eth}> ETH</span></span>)}
+              : (<label><span className={styles.logo_eth}><Image src="/ETH.png" height='32' width='32' alt="eth"/></span><span className= {styles.lbl_eth}> ETH</span></label>)}
                 </div>
                 </div>
 
@@ -818,13 +837,13 @@ export default function Home() {
         );
       }
       // if you haven't 10000 DEX token a message appear
-      else if(utils.formatEther(dexBalance) < 10000)
+      else if(utils.formatEther(dexBalance) != 1)
       {
         return (
         <div className={styles.description}>
-          You do not own 10000 DEX token. <br />
+          You do not own 1 DEX token. <br />
           <b>You cannot create a proposal</b><br />
-          Staken token in order to get DEX token
+          Add liquidity in order to get DEX token
         </div>
       );
       }
@@ -865,9 +884,7 @@ export default function Home() {
                   className={styles.create_prop_input}
                   placeholder="Timestamp"
                   required />
-            <p>
-            <center><button type="button" onClick = {(e) => _createProposal()} className={styles.btn_create}>Create</button></center>
-            </p>
+          <center><button type="button" onClick = {(e) => _createProposal()} className={styles.btn_create}>Create</button></center>
         </div>
         );
       }
@@ -894,10 +911,14 @@ export default function Home() {
       }
       else  {
           return (
-
+        <center>
         <div className={styles.main_proposal}>
         {listProposals.reverse().map(function(proposal, key) {
-          let status, endDate, button, detailsView
+          let status, endDate, button, detailsView, hasVoted
+          if(listHasVoted[proposal.id.toString()])
+          {
+            hasVoted = "(Voted)"
+          }
           const data = {
            labels : ['Yes', 'No'],
            datasets: [{
@@ -986,7 +1007,7 @@ export default function Home() {
 
           return(
           <div key={key} className={styles.prop}>
-            <div className={styles.prop_id}> Proposal # {proposal.id.toString()}</div>
+            <div className={styles.prop_id}> Proposal # {proposal.id.toString()} {hasVoted}</div>
             <p className={styles.prop_title}> Title : <b>{proposal.titre}</b></p>
             <span className={styles.prop_status}> Status : <b>{status}</b></span>
             <br/>
@@ -1001,6 +1022,8 @@ export default function Home() {
             )
           })}
           </div>
+          </center>
+
         );
       }
     }
@@ -1053,7 +1076,6 @@ export default function Home() {
       */
 
       const renderDashBoard_v2 = () => {
-        console.log(listProposals)
         if(listBalanceOfTokens !=0 )
         {
         return (
@@ -1092,16 +1114,24 @@ export default function Home() {
             <div className={styles.main_active_proposal}>
               <div className={styles.main_active_proposal_title}>Active proposals</div>
               {
-                listProposals.map((props, index) => (
-                  <div className={styles.active_propsal}>
-                    <p>Proposal {props.id.toString()}</p>
-                    <p>Title {props.titre}</p>
-                  </div>
-
-                ))
+                listProposals.map((props, index) => {
+                  let hasVoted, currentDate
+                  currentDate = Date.now()
+                  if(listHasVoted[props.id.toString()])
+                  {
+                    hasVoted = "(Voted)"
+                  }
+                  if(currentDate.toString().substring(0,10)<props.deadline) {
+                  return (
+                  <button key={index} className={styles.active_proposal} onClick={ (e) => {setCurrentPage("Gouvernance"); setPropDetails(true); setCurrentPropDetails(props.id.toString())}}>
+                    <p className={styles.prop_title_dash}>Proposal {props.id.toString()} {hasVoted}</p>
+                    <p>{props.titre}</p>
+                    <p>Dead line : {timeConverter(props.deadline)}</p>
+                  </button>
+                )}
+                })
               }
             </div>
-
            </div>
         )
       }
@@ -1204,7 +1234,7 @@ export default function Home() {
   </div>
   </div>
   <footer className={styles.footer}>
-    Made with &#10084; by Crypto Rom1
+    Made with &#10084; by Rom1
     <a href="https://t.me/romain_invest" target="_blank"><button className={styles.btn_telegram_footer} type="button"><Image src="/telegram.png" height='50' width='50' alt="telegram"/></button></a>
     <a href="https://twitter.com/CryptoRomain" target="_blank"><button className={styles.btn_twitter_footer} type="button"><Image src="/twitter.png" height='50' width='50' alt="twitter"/></button></a>
     <a href="https://www.linkedin.com/in/romain-noeppel-9a2132162/" target="_blank"><button className={styles.btn_linkedn_footer} type="button"><Image src="/linkedn.png" height='50' width='50' alt="linkedn"/></button></a>

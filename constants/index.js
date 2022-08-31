@@ -1,8 +1,15 @@
 //export const EXCHANGE_CONTRACT_ADDRESS = "0x3445A7AA9ECe53e729246734aFdf67EE83eCe1AA";
-export const EXCHANGE_CONTRACT_ADDRESS = "0x82F21525Dea953Ce8578F8aeCBB2da21364CE87F";
+//export const EXCHANGE_CONTRACT_ADDRESS = "0x82F21525Dea953Ce8578F8aeCBB2da21364CE87F";
+export const EXCHANGE_CONTRACT_ADDRESS = "0xD13891473E535B90Bea125209EF483cfAeAB8145";
 export const EXCHANGE_CONTRACT_ABI = [
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_DEXToken",
+        "type": "address"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
@@ -405,19 +412,6 @@ export const EXCHANGE_CONTRACT_ABI = [
   },
   {
     "inputs": [],
-    "name": "lucileToken",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "name",
     "outputs": [
       {
@@ -551,19 +545,6 @@ export const EXCHANGE_CONTRACT_ABI = [
   },
   {
     "inputs": [],
-    "name": "romainToken",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "symbol",
     "outputs": [
       {
@@ -644,7 +625,9 @@ export const EXCHANGE_CONTRACT_ABI = [
 ];
 
 
-export const DAO_CONTRACT_ADDRESS = "0x822d3F5239a1a5684b0DD15E5882A777F1322951";
+//export const DAO_CONTRACT_ADDRESS = "0x822d3F5239a1a5684b0DD15E5882A777F1322951";
+export const DAO_CONTRACT_ADDRESS = "0xA388E4929efaEEcC57900b649f1876c83c4c455e";
+
 export const DAO_CONTRACT_ABI = [
   {
     "inputs": [
@@ -1430,3 +1413,4 @@ export const TOKEN_CONTRACT_ABI = [
 
 export const LUCILE_TOKEN_ADDRESS = "0x9340565cdaF8622539E9A17F715Ecb1a7af09282";
 export const ROMAIN_TOKEN_ADDRESS = "0xFBfcF3A7259b4e5578a45fDf78c16281dB8Ff93a";
+export const DEX_TOKEN_ADDRESS = "0xcBC01E5Cf8923f10b4773f076e15146Ae5F17470"

@@ -9,13 +9,15 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
   background-color: rgba(0,112,218,1);
   border-bottom: 1px solid white;
   font-weight: bold;
-  position: fixed;
+  position: sticky;
   top: 0;
   width:100% ;
   overflow: hidden;
   text-align: center;
   padding-bottom: 10px;
   padding-top: 10px;
+  z-index: 1;
+
 }
 
 .description {
@@ -151,49 +153,49 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
 /* DASHBOARD */
 
 .recap {
-  display:flex;
-  flex-wrap: wrap;
+  /*display:flex;
+  flex-wrap: wrap;*/
   justify-content: center;
   margin-bottom: 70px;
-  padding-top: 50px;
-
+  margin-left: 15%
 }
 
 .portfolio, .reward {
-width: 20%;
-background-color: rgba(0,112,218,1);
-border-radius: 10px;
-padding: 5px;
-margin-bottom: 10px;
-margin-left:  5%;
-box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
-
+  display: inline-block;
+  vertical-align: top;
+  width: 20%;
+  background-color: rgba(0,112,218,1);
+  border-radius: 10px;
+  padding: 5px;
+  margin-bottom: 10px;
+  margin-left:  5%;
+  box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
 }
 
 .reward {
-width: 20%;
-background-color: rgba(0,112,218,1);
-border-radius: 10px;
-padding: 5px;
-margin-bottom: 10px;
-margin-left:  5%;
-box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
-height:150px
+  width: 20%;
+  background-color: rgba(0,112,218,1);
+  border-radius: 10px;
+  padding: 5px;
+  margin-bottom: 10px;
+  margin-left:  5%;
+  box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
+  height:150px
 }
 
 .main_active_proposal {
   display:flex;
   flex-wrap: wrap;
+  justify-content: center;
   width: 60%;
-  background-color: rgba(0,112,218,1);
   border-radius: 10px;
   padding: 5px;
   margin-top: 50px;
   margin-bottom: 10px;
   margin-left:  5%;
-  box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
 }
 .main_active_proposal_title {
+  margin-top: 20px;
   width:100%;
   font-size: 25px;
   text-align: center;
@@ -202,16 +204,24 @@ height:150px
   margin-bottom: 20px
 }
 
-.active_propsal {
-  color: black;
+.active_proposal {
+  font-size: 15px;
+  border: none;
+  text-align: center;
+  color: white;
   background-color:white;
   border-radius: 10px;
   width: 30%;
   margin-left: 2.5%;
   margin-bottom: 2.5%;
-
+  background-color: rgba(0,112,218,1);
+  box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
+  padding: 5px
 }
-
+.prop_title_dash {
+  font-weight: bold;
+  font-size: 20px
+}
 .balance_dash {
   color: white;
   margin-left: 15px
@@ -228,21 +238,25 @@ height:150px
 
 /* POOL */
 .main_pool {
-  display:flex;
-  flex-wrap: wrap;
+  /*display:flex;
+  flex-wrap: wrap;*/
   width:60%
 }
 .pool {
+  display: inline-block;
+  vertical-align: top;
   text-align: center;
-  margin-top:50px;
   margin-left: 5%;
   margin-right: 5%;
   background-image: radial-gradient(   rgba(15,27,49,1) 0%, rgba(0,112,218,1) 100% );
   width: 40%;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   border-radius: 10px;
-  padding-top: 1px;
   box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
+}
+
+.pool_title:hover {
+  border : 10 solid white
 }
 
 .remove_liquidity {
@@ -250,7 +264,6 @@ height:150px
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
   padding :5px;
-
 }
 
 .pool_title {
@@ -260,6 +273,20 @@ height:150px
   padding-bottom: 10px;
   font-weight: bold;
   box-shadow: 4px 12px 12px 1px rgba(0, 0, 0, .2);
+}
+
+.lbl_pool_title2 {
+  font-size: 15px;
+  color: grey;
+}
+
+.pool_details_lbl_logo{
+  color: white;
+  font-weight: bold;
+}
+
+.lbl_pool_details{
+  color: grey
 }
 
 .balance {
@@ -296,12 +323,16 @@ height:150px
 
 .logo_eth {
   padding: 5px;
-  margin-top: 5px
+  position: relative;
+  top:11px;
 }
 
 .logo_token {
   padding: 5px;
+  position: relative;
+  top:11px;
 }
+
 
 .fleche_swap {
   text-align: center;
@@ -318,7 +349,7 @@ height:150px
   border-radius: 10px;
   width:30%;
   margin-left: 35%;
-  margin-top:250px;
+  margin-top:200px;
   padding: 15px;
   box-shadow: 12px 12px 12px 1px rgba(0, 0, 0, .2);
 
@@ -415,7 +446,6 @@ height:150px
 
 
 .tab_choise {
-  margin-top: 50px;
   text-align: center;
 }
 
@@ -431,12 +461,15 @@ height:150px
 }
 
 .main_proposal {
-  display:flex;
+  /*display:  flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: center;*/
 }
 
 .prop {
+  text-align: left;
+  display: inline-block;
+  vertical-align:  top;
   margin-top: 50px;
   width: 30%;
   margin-left: 2.5%;
@@ -447,7 +480,7 @@ height:150px
 
 .p_form{
   float: flex;
-    clear: none;
+  clear: none;
 }
 
 .create_prop_title {
@@ -556,7 +589,7 @@ height:150px
   border-radius: 10px;
   border: none;
   font-size: 20px;
-  margin-top: 10px;
+  margin-top: 20px;
   background-color: rgba(0,112,218,1);
   box-shadow: 4px 12px 12px 1px rgba(0, 0, 0, .2);
   padding : 5px
