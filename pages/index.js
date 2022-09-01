@@ -1402,10 +1402,10 @@ const _whitelist = async (numProject) => {
   </div>
   <footer className={styles.footer}>
     Made with &#10084; by Rom1
-    <a href="https://t.me/romain_invest" target="_blank"><button className={styles.btn_telegram_footer} type="button"><Image src="/telegram.png" height='50' width='50' alt="telegram"/></button></a>
-    <a href="https://twitter.com/CryptoRomain" target="_blank"><button className={styles.btn_twitter_footer} type="button"><Image src="/twitter.png" height='50' width='50' alt="twitter"/></button></a>
-    <a href="https://www.linkedin.com/in/romain-noeppel-9a2132162/" target="_blank"><button className={styles.btn_linkedn_footer} type="button"><Image src="/linkedn.png" height='50' width='50' alt="linkedn"/></button></a>
-    <a href="https://github.com/Rom1Code/DEXter_v2" target="_blank"><button className={styles.btn_footer} type="button"><Image src="/github.png" height='50' width='50' alt="github"/></button></a>
+    <a href="https://t.me/romain_invest" target="_blank" rel="noreferrer"><button className={styles.btn_telegram_footer} type="button"><Image src="/telegram.png" height='50' width='50' alt="telegram"/></button></a>
+    <a href="https://twitter.com/CryptoRomain" target="_blank" rel="noreferrer"><button className={styles.btn_twitter_footer} type="button"><Image src="/twitter.png" height='50' width='50' alt="twitter"/></button></a>
+    <a href="https://www.linkedin.com/in/romain-noeppel-9a2132162/" target="_blank" rel="noreferrer"><button className={styles.btn_linkedn_footer} type="button"><Image src="/linkedn.png" height='50' width='50' alt="linkedn"/></button></a>
+    <a href="https://github.com/Rom1Code/DEXter_v2" target="_blank" rel="noreferrer"><button className={styles.btn_footer} type="button"><Image src="/github.png" height='50' width='50' alt="github"/></button></a>
     <p>Thanks to <a href="https://learnweb3.io/"> LearnWeb3.io</a></p>
   </footer>
 </div>
