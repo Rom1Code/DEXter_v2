@@ -1392,7 +1392,7 @@ const _whitelist = async (numProject) => {
         <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Pool")}}>Pool</button>
         <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Gouvernance")}}>DAO</button>
         <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("ICO")}}>ICO</button>
-        <a href="https://rinkebyfaucet.com/" target="_blank"><button className={styles.btn_navbar}>Faucet</button></a>
+        <a href="https://rinkebyfaucet.com/" target="_blank" rel="noreferrer"><button className={styles.btn_navbar}>Faucet</button></a>
 
         {renderButtonConnect()}
     </div>
