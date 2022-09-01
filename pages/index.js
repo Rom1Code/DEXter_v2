@@ -1372,7 +1372,7 @@ const _whitelist = async (numProject) => {
   }, [currentPage]);
 
   useEffect(() => {
-    if (currentPage!="ICO") {
+    if (currentPage==="ICO") {
       _getNbICOs();
       _fetchAllICOs();
     }
