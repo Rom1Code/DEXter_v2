@@ -29,6 +29,7 @@ import {
 } from "../utils/getAmounts";
 import { swapTokens, getAmountOfTokensReceivedFromSwap } from "../utils/swap";
 import { createProposal, voteForProposal, fetchAllProposals, getNbProposal, executeProposal } from "../utils/dao";
+import { fetchAllICOs, createICO, getNbICO, whitelist} from "../utils/whitelist";
 import { progressBar, timeConverter } from "../utils/helper";
 
 
@@ -93,9 +94,8 @@ export default function Home() {
   const [propDetails, setPropDetails] = useState(false);
   //keep track in which proposal the user want to show details
   const [currentPropDetails, setCurrentPropDetails] = useState(0);
-
+  //keep track in which pool the user want to show details
   const [currentPoolDetails, setCurrentPoolDetails] = useState(0);
-
   // We have two tabs in this dapp, Create Tab and Views Tab. This variable
   // keeps track of which Tab the user is on. If it is set to true this means
   // that the user is on `Create` tab else he is on `Views` tab
@@ -116,6 +116,10 @@ export default function Home() {
   const [selectedSwapToken, setSelectedSwapToken] = useState();
 
   const [hideZeroBalance, setHideZeroBalance] = useState(false);
+
+  const [listProjects, setListProjects] = useState([]);
+  const [nbProject, setNbProject] = useState([0]);
+  const [listIsWhitelisted, setListIsWhitelisted] = useState([]);
 
   /**
     * getAmounts call various functions to retrive amounts for ethbalance,
@@ -433,7 +437,6 @@ export default function Home() {
        var propDeadline = document.getElementById("propDeadline").value
 
        const isERC20 = await getTokensBalance(provider, walletAddress, propTokenAddress, )
-       console.log("is erc20 ", isERC20)
        if (isERC20 != undefined) {
          setLoading(true);
          await createProposal(signer, proptitle, propDesc, propDeadline, propTokenAddress )
@@ -518,6 +521,88 @@ export default function Home() {
    }
   };
 
+
+  /**** WHITELIST FUNCTIONS ****/
+
+  /**
+    * _getNbPool get the number of pool that exist and save it to nbPool
+    */
+const _getNbICOs = async  () => {
+  try {
+    const provider = await getProviderOrSigner()
+    // call the getNbPool function from the utils/pool.js folder
+    const _nbProject = await getNbICO(provider);
+    setNbProject(_nbProject)
+    _fetchAllPools(nbPool.toString())
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+/**
+  * _fetchAllPools get different data from the contract and save it to
+  * different constant like the list of pool,
+  * the list of user balance for the diferents tokens, the list pools with
+  * liquidity and the list of LP tokens in each pool and save the
+  */
+const _fetchAllICOs = async () => {
+  try{
+    const provider = await getProviderOrSigner(false);
+    const signer = await getProviderOrSigner(true);
+    const address = await signer.getAddress();
+
+    // call the fetchAllPools function from the utils/pool.js folder
+    const [_listProjects, _listIsWhitelisted] = await fetchAllICOs(provider, address)
+    setListProjects(_listProjects)
+    setListIsWhitelisted(_listIsWhitelisted)
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+/**
+ * _createICO: call createICO function from the utils/whitelist.js folder
+ */
+const _createICO = async () => {
+  try {
+    const provider = await getProviderOrSigner()
+    const signer = await getProviderOrSigner(true)
+
+    // get the values from the differents fields
+    var icoTokenAddress = document.getElementById("icoTokenAddress").value
+    var icoMaxWhitelistAddresses = document.getElementById("icoMaxWhitelistAddresses").value
+    var icoDeadline = document.getElementById("icoDeadline").value
+    const isERC20 = await getTokensBalance(provider, walletAddress, icoTokenAddress, )
+    if (isERC20 != undefined) {
+      setLoading(true);
+      await createICO(signer, icoTokenAddress, icoMaxWhitelistAddresses, icoDeadline)
+      // call _getNbProject in order to update the nb of proposal
+      await _getNbICOs()
+      // call _fetchAllProjects in order to update the differents list
+      await fetchAllICOs()
+      setLoading(false);
+   }
+   else {
+     window.alert("Token address is not an ERC20 token");
+     throw new Error("Not an ERC20 address");
+   }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+const _whitelist = async (numProject) => {
+  try{
+    const signer = await getProviderOrSigner(true)
+    await whitelist(signer, numProject)
+  } catch (err) {
+   console.error(err);
+ }
+}
+
+
+
   /*** END ***/
 
  /**
@@ -581,7 +666,6 @@ export default function Home() {
       * render pool tab
       */
     const renderPool = () => {
-      console.log(currentPoolDetails)
       if(loading){
         return (
           <div className={styles.loading}>
@@ -1147,6 +1231,78 @@ export default function Home() {
       }
     }
 
+    /*
+     *render the ICO page
+     */
+
+     const renderICO = () => {
+       return (
+         <div className={styles.main_ICO}>
+           <div className={styles.main_create_ico}>
+             <p className={styles.title_main_create_ico}>Create ICO</p>
+             <p className={styles.create_ico_field}>Token Address : </p>
+               <input
+                   type="text"
+                   id="icoTokenAddress"
+                   className={styles.create_ico_input}
+                   placeholder="ERC-20 address"
+                   required />
+             <p className={styles.create_ico_field}>Whitelist : Max addresses</p>
+               <input
+                   type="text"
+                   id="icoMaxWhitelistAddresses"
+                   className={styles.create_ico_input}
+                   placeholder="Max"
+                   required />
+
+               <p className={styles.create_ico_field}>End date : </p>
+                 <input
+                     type="text"
+                     id="icoDeadline"
+                     className={styles.create_ico_input}
+                     placeholder="Timestamp"
+                     required />
+                     <br/>
+             <center><button className={styles.btn_create_ico} onClick={(e) => _createICO()}>Create</button></center>
+            </div>
+          <br/><br/><br/>
+         <div className={styles.main_ICO}>
+         <p className={styles.title_main_whitelist}>Whitelist your address and get advantage price for the following token </p>
+          <div className={styles.main_whitelist}>
+            {listProjects.map((project, index) => (
+                  index !=0 ? (
+                    <div className={styles.ico_whitelist}>
+                      <p className={styles.title_ico_whitelist}>{project.name} ({project.symbol})</p>
+                      <center><Image src={"/" + project.symbol + ".png"} height='64' width='64' alt="eth"/></center>
+                      <p className={styles.endreg_ico_whitelist}>End registration</p>
+                      <p className={styles.deadline_ico_whitelist}>{timeConverter(project.deadline)}</p>
+                      {!listIsWhitelisted[index] && project.deadline.toString() >  Math.round(new Date()/1000) && project.nbWhitelisted != project.maxWhitelisted? (
+                        <center><button type="button"  className={styles.btn_register} onClick={(e) => _whitelist(project.id.toString())}>Register</button></center>
+                    ) : (
+                      listIsWhitelisted[index] ? (
+                      <center><button type="button" disabled className={styles.btn_registered}>Done!</button></center>
+                    ) : (
+                      project.nbWhitelisted == project.maxWhitelisted ? (
+                      <center><button type="button" disabled className={styles.btn_deadline_reached}>Limit reached</button></center>
+                    ) : (
+                      <center><button type="button" disabled className={styles.btn_deadline_reached}>Finished</button></center>
+                    )))}
+                    <p className={styles.limit_ico_whitelist}>Limit : {project.nbWhitelisted}/{project.maxWhitelisted}</p>
+                    </div>
+                  )
+                  :
+                  (null)
+              )
+            )}
+          </div>
+         </div>
+         </div>
+
+       )
+
+
+     }
+
 
     /*
      *renderPage: Returns a button based on the state of the dapp
@@ -1165,6 +1321,10 @@ export default function Home() {
       else if(currentPage=="Gouvernance"){
         return (renderDAO());
       }
+      else if(currentPage=="ICO"){
+        return (renderICO());
+      }
+
     }
 
 
@@ -1211,6 +1371,12 @@ export default function Home() {
     }
   }, [currentPage]);
 
+  useEffect(() => {
+    if (currentPage!="ICO") {
+      _getNbICOs();
+      _fetchAllICOs();
+    }
+  }, [currentPage]);
 
   return (
     <div>
@@ -1225,6 +1391,7 @@ export default function Home() {
         <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Swap")}}>Swap</button>
         <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Pool")}}>Pool</button>
         <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Gouvernance")}}>DAO</button>
+        <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("ICO")}}>ICO</button>
         <a href="https://rinkebyfaucet.com/" target="_blank"><button className={styles.btn_navbar}>Faucet</button></a>
 
         {renderButtonConnect()}

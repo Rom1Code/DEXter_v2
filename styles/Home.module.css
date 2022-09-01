@@ -658,3 +658,133 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
   margin-left:35%;
   margin-top: -100px
 }
+
+
+/* DAO */
+
+
+
+.main_create_ico {
+  background-image: radial-gradient(   rgba(15,27,49,1) 0%, rgba(0,112,218,1) 100% );
+  margin-top: 50px;
+  width: 30%;
+  margin-left: 35%;
+  background-color: white;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.create_ico_field {
+  text-align: center;
+  color : white;
+  font-weight: bold;
+  font-size: 20px
+}
+
+.create_ico_input {
+  height: 25px;
+  width :60%;
+  margin-left: 20%
+}
+
+.btn_create_ico {
+
+}
+
+.main_ICO{
+}
+
+.title_main_whitelist, .title_main_create_ico {
+  font-weight: bold;
+  text-align: center;
+  font-size: 20px;
+  color: white;
+}
+
+.main_whitelist {
+  text-align: left;
+  margin-top: 50px;
+  width: 80%;
+  margin-left: 10%;
+  border-radius: 10px;
+  padding-left: 5%;
+  padding-right: 5%;
+  padding-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.ico_whitelist {
+  background-color: white;
+  width:15%;
+  border: none;
+  border-radius: 10px;
+  margin: 5px;
+}
+
+.title_ico_whitelist{
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: -5px
+}
+
+.endreg_ico_whitelist, .limit_ico_whitelist {
+  font-weight: bold;
+  text-align: center;
+  margin-top: -10px
+
+}
+
+.logo_ico_whitelist{
+  text-align: center;
+}
+
+.deadline_ico_whitelist {
+  text-align: center;
+  margin-top: -15px
+}
+
+
+.btn_register {
+  color: white;
+  border-radius: 10px;
+  border: none;
+  font-size: 15px;
+  background-color: rgba(0,112,218,1);
+  box-shadow: 4px 12px 12px 1px rgba(0, 0, 0, .2);
+  padding : 5px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.btn_registered, .btn_deadline_reached {
+  color: grey;
+  border-radius: 10px;
+  border: none;
+  font-size: 15px;
+  padding : 5px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  border: 1px solid grey
+}
+.btn_create_ico {
+  color: white;
+  border-radius: 10px;
+  border: none;
+  font-size: 15px;
+  margin-top: 20px;
+  background-color: rgba(0,112,218,1);
+  box-shadow: 4px 12px 12px 1px rgba(0, 0, 0, .2);
+  padding : 5px;
+  margin: 5px;
+  font-weight: bold;
+  margin-top: 20px
+}
+
+.btn_register:hover, .btn_create_ico:hover {
+  background: white;
+  color: rgba(0,112,218,1);
+  border-radius: 10px
+}
