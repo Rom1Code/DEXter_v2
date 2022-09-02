@@ -9,7 +9,11 @@ import React, { useEffect, useRef, useState } from "react";
 import Web3Modal from "web3modal";
 import styles from "../styles/Home.module.css";
 import {
-  DEX_TOKEN_ADDRESS
+  DEX_TOKEN_ADDRESS,
+  WHITELIST_CONTRACT_ADDRESS,
+  WHITELIST_CONTRACT_ABI,
+  DAO_CONTRACT_ADDRESS,
+  DAO_CONTRACT_ABI
 } from "../constants";
 import {
   addLiquidity,
@@ -30,7 +34,7 @@ import {
 import { swapTokens, getAmountOfTokensReceivedFromSwap } from "../utils/swap";
 import { createProposal, voteForProposal, fetchAllProposals, getNbProposal, executeProposal } from "../utils/dao";
 import { fetchAllICOs, createICO, getNbICO, whitelist} from "../utils/whitelist";
-import { progressBar, timeConverter } from "../utils/helper";
+import { progressBar, timeConverter, getOwner } from "../utils/helper";
 
 
 
@@ -114,12 +118,17 @@ export default function Home() {
   const [listLPToken, setListLPToken] = useState([]);
   //keep track of the token select in the list in swap tab
   const [selectedSwapToken, setSelectedSwapToken] = useState();
-
+  //keep track if hide zero balance is check
   const [hideZeroBalance, setHideZeroBalance] = useState(false);
-
+  //keep track of the list of ICO
   const [listProjects, setListProjects] = useState([]);
+  //keep track of the number of ICO
   const [nbProject, setNbProject] = useState([0]);
+  //keep track of the registered ICO
   const [listIsWhitelisted, setListIsWhitelisted] = useState([]);
+
+  const [daoContractOwner, setDaoContractOwner] = useState(false);
+  const [whitelistContractOwner, setWhitelistContractOwner] = useState(false);
 
   /**
     * getAmounts call various functions to retrive amounts for ethbalance,
@@ -177,6 +186,34 @@ export default function Home() {
         )}
         </span>
       )}
+
+      /**
+        * getOwner: gets the contract owner by connected address
+        */
+       const _getOwners = async () => {
+         try {
+           const provider = await getProviderOrSigner();
+
+           const _daoOwner = await getOwner(provider, DAO_CONTRACT_ADDRESS, DAO_CONTRACT_ABI);
+           const _whitelistOwner = await getOwner(provider, WHITELIST_CONTRACT_ADDRESS, WHITELIST_CONTRACT_ABI);
+           console.log("_whitelistOwner",_whitelistOwner)
+           const signer = await getProviderOrSigner(true);
+           // Get the address associated to signer which is connected to Metamask
+           const address = await signer.getAddress();
+           console.log("address",address)
+
+           if (address.toLowerCase() === _daoOwner.toLowerCase()) {
+             setDaoContractOwner(true);
+           }
+           if (address.toLowerCase() === _whitelistOwner.toLowerCase()) {
+             console.log(true)
+             setWhitelistContractOwner(true);
+           }
+
+         } catch (err) {
+           console.error(err.message);
+         }
+       };
 
 
     /**** POOL FUNCTIONS ****/
@@ -572,11 +609,12 @@ const _createICO = async () => {
     // get the values from the differents fields
     var icoTokenAddress = document.getElementById("icoTokenAddress").value
     var icoMaxWhitelistAddresses = document.getElementById("icoMaxWhitelistAddresses").value
+    var icoTotalSupply = document.getElementById("icoTotalSupply").value
     var icoDeadline = document.getElementById("icoDeadline").value
     const isERC20 = await getTokensBalance(provider, walletAddress, icoTokenAddress, )
     if (isERC20 != undefined) {
       setLoading(true);
-      await createICO(signer, icoTokenAddress, icoMaxWhitelistAddresses, icoDeadline)
+      await createICO(signer, icoTokenAddress, icoTotalSupply, icoMaxWhitelistAddresses, icoDeadline)
       // call _getNbProject in order to update the nb of proposal
       await _getNbICOs()
       // call _fetchAllProjects in order to update the differents list
@@ -921,7 +959,7 @@ const _whitelist = async (numProject) => {
         );
       }
       // if you haven't 10000 DEX token a message appear
-      else if(utils.formatEther(dexBalance) != 1)
+      else if(utils.formatEther(dexBalance) < 1)
       {
         return (
         <div className={styles.description}>
@@ -1053,17 +1091,23 @@ const _whitelist = async (numProject) => {
             button = <div className={styles.div_btn}><input onClick={(event) => {}}
                               className={styles.btn_already_voted} type="button" id="half" value="Already Vote" disabled /></div>
           }
-          else if(proposal.yes.toString()> proposal.no.toString() && (proposal.deadline.toString() <  Math.round(new Date()/1000)) && !proposal.isExecuted )
+          else if(proposal.yes.toString()> proposal.no.toString() && (proposal.deadline.toString() <  Math.round(new Date()/1000)) && !proposal.isExecuted && daoContractOwner)
           {
             status = <span className={styles.div_btn}>Passed</span>
             endDate = "Finished"
-            button = <div className={styles.btn_execute}><input className="" type="button" value="Execute" onClick = { () => _executeProposal(proposal.id.toString())} /></div>
+            button = <div ><input className={styles.btn_execute} type="button" value="Execute" onClick = { () => _executeProposal(proposal.id.toString())} /></div>
           }
           else if (proposal.isExecuted){
             status = "Executed"
             endDate = "Finished"
             button = <div className={styles.div_btn}><input onClick={(event) => {}}
                               className={styles.btn_voting_end} type="button" value="Executed" disabled /></div>
+          }
+          else if (!proposal.isExecuted){
+            status = "Executed"
+            endDate = "Finished"
+            button = <div className={styles.div_btn}><input onClick={(event) => {}}
+                              className={styles.btn_voting_end} type="button" value="Waiting execution" disabled /></div>
           }
           else {
             status = "Rejected"
@@ -1236,8 +1280,10 @@ const _whitelist = async (numProject) => {
      */
 
      const renderICO = () => {
+       console.log("whitelistContractOwner",whitelistContractOwner)
        return (
          <div className={styles.main_ICO}>
+         {whitelistContractOwner ? (
            <div className={styles.main_create_ico}>
              <p className={styles.title_main_create_ico}>Create ICO</p>
              <p className={styles.create_ico_field}>Token Address : </p>
@@ -1248,6 +1294,13 @@ const _whitelist = async (numProject) => {
                    placeholder="ERC-20 address"
                    required />
              <p className={styles.create_ico_field}>Whitelist : Max addresses</p>
+               <input
+                   type="text"
+                   id="icoTotalSupply"
+                   className={styles.create_ico_input}
+                   placeholder="Supply"
+                   required />
+             <p className={styles.create_ico_field}>Total Supply</p>
                <input
                    type="text"
                    id="icoMaxWhitelistAddresses"
@@ -1265,8 +1318,9 @@ const _whitelist = async (numProject) => {
                      <br/>
              <center><button className={styles.btn_create_ico} onClick={(e) => _createICO()}>Create</button></center>
             </div>
-          <br/><br/><br/>
-         <div className={styles.main_ICO}>
+          ) : (null)}
+          <br/>
+         <div className={styles.register_ICO}>
          <p className={styles.title_main_whitelist}>Whitelist your address and get advantage price for the following token </p>
           <div className={styles.main_whitelist}>
             {listProjects.map((project, index) => (
@@ -1297,10 +1351,7 @@ const _whitelist = async (numProject) => {
           </div>
          </div>
          </div>
-
        )
-
-
      }
 
 
@@ -1347,6 +1398,7 @@ const _whitelist = async (numProject) => {
       _fetchAllPools();
       _fetchAllProposals();
       getAmounts();
+      _getOwners();
     }
 
   }, [walletConnected]);

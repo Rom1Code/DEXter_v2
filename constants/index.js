@@ -1,6 +1,6 @@
 //export const EXCHANGE_CONTRACT_ADDRESS = "0x3445A7AA9ECe53e729246734aFdf67EE83eCe1AA";
 //export const EXCHANGE_CONTRACT_ADDRESS = "0x82F21525Dea953Ce8578F8aeCBB2da21364CE87F";
-export const EXCHANGE_CONTRACT_ADDRESS = "0xD13891473E535B90Bea125209EF483cfAeAB8145";
+export const EXCHANGE_CONTRACT_ADDRESS = "0x69dB42483e4871A5088388aA21Bd5B71E911407E";
 export const EXCHANGE_CONTRACT_ABI = [
   {
     "inputs": [
@@ -285,54 +285,6 @@ export const EXCHANGE_CONTRACT_ABI = [
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "inputAmount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "inputReserve",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "outputReserve",
-        "type": "uint256"
-      }
-    ],
-    "name": "getAmountOfTokens",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_tokenAddress",
-        "type": "address"
-      }
-    ],
-    "name": "getIndexFromAddress",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
         "name": "index",
         "type": "uint256"
       }
@@ -357,25 +309,6 @@ export const EXCHANGE_CONTRACT_ABI = [
       }
     ],
     "name": "getPoolTokenReserve",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_tokenAddress",
-        "type": "address"
-      }
-    ],
-    "name": "getReserve",
     "outputs": [
       {
         "internalType": "uint256",
@@ -626,14 +559,19 @@ export const EXCHANGE_CONTRACT_ABI = [
 
 
 //export const DAO_CONTRACT_ADDRESS = "0x822d3F5239a1a5684b0DD15E5882A777F1322951";
-export const DAO_CONTRACT_ADDRESS = "0xA388E4929efaEEcC57900b649f1876c83c4c455e";
+export const DAO_CONTRACT_ADDRESS = "0xBB1d464142C36C4d60317E65F1c800A605846504";
 
 export const DAO_CONTRACT_ABI = [
   {
     "inputs": [
       {
         "internalType": "address",
-        "name": "_exchangeToken",
+        "name": "_exchangeContract",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_dexToken",
         "type": "address"
       }
     ],
@@ -646,23 +584,17 @@ export const DAO_CONTRACT_ABI = [
       {
         "indexed": true,
         "internalType": "address",
-        "name": "owner",
+        "name": "previousOwner",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "spender",
+        "name": "newOwner",
         "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
       }
     ],
-    "name": "Approval",
+    "name": "OwnershipTransferred",
     "type": "event"
   },
   {
@@ -703,98 +635,6 @@ export const DAO_CONTRACT_ABI = [
     "type": "event"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
-      }
-    ],
-    "name": "Transfer",
-    "type": "event"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "spender",
-        "type": "address"
-      }
-    ],
-    "name": "allowance",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "spender",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "approve",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "balanceOf",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "string",
@@ -820,56 +660,6 @@ export const DAO_CONTRACT_ABI = [
     "name": "createProposal",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "decimals",
-    "outputs": [
-      {
-        "internalType": "uint8",
-        "name": "",
-        "type": "uint8"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "spender",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "subtractedValue",
-        "type": "uint256"
-      }
-    ],
-    "name": "decreaseAllowance",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "exchangeContract",
-    "outputs": [
-      {
-        "internalType": "contract Exchange",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -910,43 +700,6 @@ export const DAO_CONTRACT_ABI = [
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "spender",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "addedValue",
-        "type": "uint256"
-      }
-    ],
-    "name": "increaseAllowance",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "name",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "nbProposal",
     "outputs": [
@@ -954,6 +707,19 @@ export const DAO_CONTRACT_ABI = [
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -1025,51 +791,8 @@ export const DAO_CONTRACT_ABI = [
   },
   {
     "inputs": [],
-    "name": "symbol",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "totalSupply",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "transfer",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "name": "renounceOwnership",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -1077,28 +800,12 @@ export const DAO_CONTRACT_ABI = [
     "inputs": [
       {
         "internalType": "address",
-        "name": "from",
+        "name": "newOwner",
         "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
       }
     ],
-    "name": "transferFrom",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "name": "transferOwnership",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -1122,12 +829,31 @@ export const DAO_CONTRACT_ABI = [
   }
 ];
 
-export const WHITELIST_CONTRACT_ADDRESS = "0x6362c595Fc1a0Baee39C120a182033Dd92D836dD";
+export const WHITELIST_CONTRACT_ADDRESS = "0x0781aeAA1A4A03f02732e099aE5A94Fc769aCBc1";
 export const WHITELIST_CONTRACT_ABI = [
   {
     "inputs": [],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
   },
   {
     "inputs": [
@@ -1249,6 +975,39 @@ export const WHITELIST_CONTRACT_ABI = [
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ];
@@ -1545,4 +1304,4 @@ export const TOKEN_CONTRACT_ABI = [
 
 export const LUCILE_TOKEN_ADDRESS = "0x9340565cdaF8622539E9A17F715Ecb1a7af09282";
 export const ROMAIN_TOKEN_ADDRESS = "0xFBfcF3A7259b4e5578a45fDf78c16281dB8Ff93a";
-export const DEX_TOKEN_ADDRESS = "0xcBC01E5Cf8923f10b4773f076e15146Ae5F17470"
+export const DEX_TOKEN_ADDRESS = "0xE0cEeACCA34399e3D486ba64F4ff8bD16CC48b10"

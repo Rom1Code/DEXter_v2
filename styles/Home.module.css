@@ -662,11 +662,9 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
 
 /* DAO */
 
-
-
 .main_create_ico {
   background-image: radial-gradient(   rgba(15,27,49,1) 0%, rgba(0,112,218,1) 100% );
-  margin-top: 50px;
+  margin-top: 20px;
   width: 30%;
   margin-left: 35%;
   background-color: white;
@@ -685,10 +683,6 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
   height: 25px;
   width :60%;
   margin-left: 20%
-}
-
-.btn_create_ico {
-
 }
 
 .main_ICO{

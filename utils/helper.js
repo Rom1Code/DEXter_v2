@@ -1,4 +1,8 @@
 import styles from "../styles/Home.module.css";
+import { Contract } from "ethers";
+import {
+  TOKEN_CONTRACT_ABI,
+} from "../constants";
 
 // convert timestamp to date
 export const timeConverter = (UNIX_timestamp) => {
@@ -36,3 +40,13 @@ export const progressBar = (yes,total) => {
     return <div className={styles.progress_0}>.</div>
   }
 }
+
+/**
+  * getOwner: gets the contract owner by connected address
+  */
+ export const getOwner = async (provider, _contractAddress, _abiContract) => {
+     const contract = new Contract(_contractAddress, _abiContract, provider);
+     // call the owner function from the contract
+     const _owner = await contract.owner();
+     return _owner;
+ };
