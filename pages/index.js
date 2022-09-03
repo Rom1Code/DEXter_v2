@@ -33,7 +33,7 @@ import {
 } from "../utils/getAmounts";
 import { swapTokens, getAmountOfTokensReceivedFromSwap } from "../utils/swap";
 import { createProposal, voteForProposal, fetchAllProposals, getNbProposal, executeProposal } from "../utils/dao";
-import { fetchAllICOs, createICO, getNbICO, whitelist} from "../utils/whitelist";
+import { fetchAllICOs, createICO, getNbICO, whitelist, startPresale, presaleMint, mint} from "../utils/whitelist";
 import { progressBar, timeConverter, getOwner } from "../utils/helper";
 
 
@@ -602,6 +602,7 @@ const _fetchAllICOs = async () => {
  * _createICO: call createICO function from the utils/whitelist.js folder
  */
 const _createICO = async () => {
+  console.log(_createICO)
   try {
     const provider = await getProviderOrSigner()
     const signer = await getProviderOrSigner(true)
@@ -609,12 +610,12 @@ const _createICO = async () => {
     // get the values from the differents fields
     var icoTokenAddress = document.getElementById("icoTokenAddress").value
     var icoMaxWhitelistAddresses = document.getElementById("icoMaxWhitelistAddresses").value
-    var icoTotalSupply = document.getElementById("icoTotalSupply").value
     var icoDeadline = document.getElementById("icoDeadline").value
+    console.log(icoTokenAddress, icoMaxWhitelistAddresses, icoDeadline)
     const isERC20 = await getTokensBalance(provider, walletAddress, icoTokenAddress, )
     if (isERC20 != undefined) {
       setLoading(true);
-      await createICO(signer, icoTokenAddress, icoTotalSupply, icoMaxWhitelistAddresses, icoDeadline)
+      await createICO(signer, icoTokenAddress, icoMaxWhitelistAddresses, icoDeadline)
       // call _getNbProject in order to update the nb of proposal
       await _getNbICOs()
       // call _fetchAllProjects in order to update the differents list
@@ -630,14 +631,58 @@ const _createICO = async () => {
   }
 }
 
-const _whitelist = async (numProject) => {
+const _whitelist = async (_numICO) => {
   try{
+    setLoading(true);
     const signer = await getProviderOrSigner(true)
-    await whitelist(signer, numProject)
+    await whitelist(signer, _numICO)
+    setLoading(false);
   } catch (err) {
    console.error(err);
  }
 }
+
+const _startPresale = async(_numICO) => {
+  try{
+    setLoading(true);
+    const signer = await getProviderOrSigner(true)
+    await startPresale(signer, _numICO)
+    setLoading(false);
+  } catch (err) {
+   console.error(err);
+ }
+}
+
+const _presaleMint = async(_numICO,) => {
+  try{
+    const amount = document.getElementById("presale_amount").value
+    setLoading(true);
+    const signer = await getProviderOrSigner(true)
+    await presaleMint(signer, _numICO, utils.formatEther(amount))
+    setLoading(false);
+  } catch (err) {
+   console.error(err);
+ }
+}
+
+const _mint = async(_numICO) => {
+  console.log(_mint)
+
+  console.log(_numICO)
+  try{
+    const amount = document.getElementById("sale_amount").value
+    console.log(amount)
+
+    setLoading(true);
+    const signer = await getProviderOrSigner(true)
+    await mint(signer, _numICO, utils.formatEther(amount))
+    setLoading(false);
+  } catch (err) {
+   console.error(err);
+ }
+}
+
+
 
 
 
@@ -1296,18 +1341,10 @@ const _whitelist = async (numProject) => {
              <p className={styles.create_ico_field}>Whitelist : Max addresses</p>
                <input
                    type="text"
-                   id="icoTotalSupply"
-                   className={styles.create_ico_input}
-                   placeholder="Supply"
-                   required />
-             <p className={styles.create_ico_field}>Total Supply</p>
-               <input
-                   type="text"
                    id="icoMaxWhitelistAddresses"
                    className={styles.create_ico_input}
                    placeholder="Max"
                    required />
-
                <p className={styles.create_ico_field}>End date : </p>
                  <input
                      type="text"
@@ -1326,7 +1363,7 @@ const _whitelist = async (numProject) => {
             {listProjects.map((project, index) => (
                   index !=0 ? (
                     <div className={styles.ico_whitelist}>
-                      <p className={styles.title_ico_whitelist}>{project.name} ({project.symbol})</p>
+                      <p className={styles.title_ico_whitelist}>{project.id.toString()}-{project.name} ({project.symbol})</p>
                       <center><Image src={"/" + project.symbol + ".png"} height='64' width='64' alt="eth"/></center>
                       <p className={styles.endreg_ico_whitelist}>End registration</p>
                       <p className={styles.deadline_ico_whitelist}>{timeConverter(project.deadline)}</p>
@@ -1350,6 +1387,71 @@ const _whitelist = async (numProject) => {
             )}
           </div>
          </div>
+
+         <div className={styles.presale_ICO}>
+         <p className={styles.title_main_presale}>ICO Presale </p>
+          <div className={styles.main_presale}>
+            {listProjects.map((project, index) => (
+                  index !=0 && project.deadline.toString() < Math.round(new Date()/1000) && listIsWhitelisted[index] && (project.presaleEnded.toString() > Math.round(new Date()/1000) || project.presaleEnded.toString() == 0) ? (
+                    <div className={styles.ico_presale}>
+                      <p className={styles.title_ico_presale}>{project.id.toString()}-{project.name} ({project.symbol})</p>
+                      <center><Image src={"/" + project.symbol + ".png"} height='64' width='64' alt="eth"/></center>
+                      <p className={styles.end_ico_presale}>End Presale</p>
+                      <p className={styles.presaleEnded_ico}> {project.presaleEnded ==0 ? "?" : timeConverter(project.presaleEnded)}</p>
+                      {whitelistContractOwner && !project.presaleStarted ? (
+                        <center><button type="button"  className={styles.btn_presale} onClick={(e) => _startPresale(project.id.toString())}>Start Presale</button></center>
+                    ) : (
+                      project.presaleStarted && project.presaleEnded.toString() > Math.round(new Date()/1000) && project.nbBuyToken.toString() != project.maxSupplyICO.toString() ? (
+                      <div><input
+                            type="text"
+                            id="presale_amount"
+                            className={styles.create_ico_input}
+                            placeholder="Amount"
+                            required />
+                            <br/>
+                      <center><button type="button"  className={styles.btn_buy_presale} onClick={(e) => _presaleMint(project.id.toString())}>Buy</button></center></div>
+                    ) :  (
+                      <center><button type="button" disabled className={styles.btn_soldout}>Sold Out</button></center>
+                    ))}
+                    <p className={styles.limit_ico_whitelist}>Available : {utils.formatEther(project.nbBuyToken)}/{utils.formatEther(project.maxSupplyICO)}</p>
+                    </div>
+                  )
+                  :
+                  (null)
+              )
+            )}
+          </div>
+         </div>
+
+         <div className={styles.sale_ICO}>
+         <p className={styles.title_main_sale}>ICO Sale </p>
+          <div className={styles.main_sale}>
+            {listProjects.map((project, index) => (
+                  index !=0 && project.presaleEnded.toString() < Math.round(new Date()/1000) && project.presaleStarted ? (
+                    <div className={styles.ico_sale}>
+                      <p className={styles.title_ico_sale}>{project.id.toString()}-{project.name} ({project.symbol})</p>
+                      <center><Image src={"/" + project.symbol + ".png"} height='64' width='64' alt="eth"/></center>
+                      <div><input
+                            type="text"
+                            id="sale_amount"
+                            className={styles.presale_input}
+                            placeholder="Amount"
+                            required />
+                            <br/>
+                      {project.nbBuyToken.toString() != project.maxSupplyICO.toString() ? (
+                            <center><button type="button"  className={styles.btn_buy_ico} onClick={(e) => _mint(project.id.toString())}>Buy</button></center>
+                          ) : (
+                            <center><button type="button"  disabled className={styles.btn_soldout}>Sold Out</button></center>
+                          )}
+                      </div>
+                      <p className={styles.sold_counter}>Sold : {utils.formatEther(project.nbBuyToken)}/{utils.formatEther(project.maxSupplyICO)}</p>
+                    </div>
+                  )
+                  : (null)
+            ))}
+          </div>
+         </div>
+
          </div>
        )
      }

@@ -829,7 +829,7 @@ export const DAO_CONTRACT_ABI = [
   }
 ];
 
-export const WHITELIST_CONTRACT_ADDRESS = "0x0781aeAA1A4A03f02732e099aE5A94Fc769aCBc1";
+export const WHITELIST_CONTRACT_ADDRESS = "0xa216635257b1fB887B7F2EB55E97e5F902D34b39";
 export const WHITELIST_CONTRACT_ABI = [
   {
     "inputs": [],
@@ -856,6 +856,10 @@ export const WHITELIST_CONTRACT_ABI = [
     "type": "event"
   },
   {
+    "stateMutability": "payable",
+    "type": "fallback"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -874,6 +878,21 @@ export const WHITELIST_CONTRACT_ABI = [
         "internalType": "address",
         "name": "tokenAddress",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenPrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "nbBuyToken",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxSupplyICO",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -899,6 +918,29 @@ export const WHITELIST_CONTRACT_ABI = [
         "internalType": "string",
         "name": "symbol",
         "type": "string"
+      },
+      {
+        "internalType": "bool",
+        "name": "presaleStarted",
+        "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "presaleEnded",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "_paused",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -965,6 +1007,24 @@ export const WHITELIST_CONTRACT_ABI = [
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "_numICO",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "mint",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "nbProject",
     "outputs": [
@@ -991,8 +1051,52 @@ export const WHITELIST_CONTRACT_ABI = [
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "_numICO",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "presaleMint",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bool",
+        "name": "val",
+        "type": "bool"
+      }
+    ],
+    "name": "setPaused",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "_numICO",
+        "type": "uint8"
+      }
+    ],
+    "name": "startPresale",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1009,6 +1113,17 @@ export const WHITELIST_CONTRACT_ABI = [
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdraw",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "receive"
   }
 ];
 

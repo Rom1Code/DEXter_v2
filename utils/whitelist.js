@@ -43,6 +43,7 @@ export const fetchAllICOs = async (provider, address) => {
 }
 
 export const createICO = async (signer, _tokenAddress, _maxWhitelistAddresses, _deadline) => {
+  console.log(_tokenAddress, _maxWhitelistAddresses, _deadline)
     // Create a new instance of the whitelist contract
     const whitelistContract = new Contract(
       WHITELIST_CONTRACT_ADDRESS,
@@ -59,6 +60,38 @@ export const whitelist = async (signer, _numProject) => {
     WHITELIST_CONTRACT_ABI,
     signer);
   const tx= await whitelistContract.addWhitelistAddress(_numProject);
+
+  await tx.wait();
+}
+
+export const startPresale = async (signer, _numICO) => {
+  const whitelistContract = new Contract(
+    WHITELIST_CONTRACT_ADDRESS,
+    WHITELIST_CONTRACT_ABI,
+    signer);
+  const tx= await whitelistContract.startPresale(_numICO);
+
+  await tx.wait();
+}
+
+export const presaleMint = async (signer, _numICO, _amount) => {
+  console.log(_numICO, _amount)
+  const whitelistContract = new Contract(
+    WHITELIST_CONTRACT_ADDRESS,
+    WHITELIST_CONTRACT_ABI,
+    signer);
+  const tx= await whitelistContract.presaleMint(_numICO, _amount);
+
+  await tx.wait();
+}
+
+export const mint = async (signer, _numICO, _amount) => {
+  console.log(_numICO, _amount)
+  const whitelistContract = new Contract(
+    WHITELIST_CONTRACT_ADDRESS,
+    WHITELIST_CONTRACT_ABI,
+    signer);
+  const tx= await whitelistContract.mint(_numICO, _amount);
 
   await tx.wait();
 }
