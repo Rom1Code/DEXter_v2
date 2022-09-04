@@ -740,6 +740,11 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
   margin-top: -15px
 }
 
+.sold_counter {
+  text-align: center;
+  margin-top: -15px;
+  font-weight: bold;
+}
 
 .btn_register {
   color: white;
@@ -765,6 +770,7 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
   margin-bottom: 10px;
   font-weight: bold;
   margin-bottom: 20px;
+  margin-top: 10px
 }
 
 .btn_registered, .btn_deadline_reached {
@@ -808,8 +814,7 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
   border-radius: 10px
 }
 
-.presale_input {
-  margin-bottom: 10px;
+.presale_input, .sale_input {
   height: 25px;
   width :60%;
   margin-left: 20%

@@ -129,6 +129,8 @@ export default function Home() {
 
   const [daoContractOwner, setDaoContractOwner] = useState(false);
   const [whitelistContractOwner, setWhitelistContractOwner] = useState(false);
+  const [saleAmount, setSaleAmount] = useState([0]);
+  const [presaleAmount, setPresaleAmount] = useState([0]);
 
   /**
     * getAmounts call various functions to retrive amounts for ethbalance,
@@ -653,29 +655,28 @@ const _startPresale = async(_numICO) => {
  }
 }
 
-const _presaleMint = async(_numICO,) => {
+const _presaleMint = async(_numICO, _tokenPrice) => {
   try{
-    const amount = document.getElementById("presale_amount").value
     setLoading(true);
     const signer = await getProviderOrSigner(true)
-    await presaleMint(signer, _numICO, utils.formatEther(amount))
+    await presaleMint(signer, _numICO, presaleAmount, _tokenPrice)
     setLoading(false);
   } catch (err) {
    console.error(err);
  }
 }
 
-const _mint = async(_numICO) => {
-  console.log(_mint)
+const _mint = async (_numICO, _tokenPrice) => {
+  console.log("_mint")
 
   console.log(_numICO)
   try{
-    const amount = document.getElementById("sale_amount").value
-    console.log(amount)
+    //const amount = document.getElementById("sale_amount").value
+    console.log(utils.formatEther(saleAmount))
 
     setLoading(true);
     const signer = await getProviderOrSigner(true)
-    await mint(signer, _numICO, utils.formatEther(amount))
+    await mint(signer, _numICO, saleAmount, _tokenPrice)
     setLoading(false);
   } catch (err) {
    console.error(err);
@@ -1325,7 +1326,14 @@ const _mint = async(_numICO) => {
      */
 
      const renderICO = () => {
-       console.log("whitelistContractOwner",whitelistContractOwner)
+       if(loading){
+         return (
+           <div className={styles.loading}>
+             Loading... Waiting for transaction...
+           </div>
+         );
+       }
+       else {
        return (
          <div className={styles.main_ICO}>
          {whitelistContractOwner ? (
@@ -1357,6 +1365,7 @@ const _mint = async(_numICO) => {
             </div>
           ) : (null)}
           <br/>
+
          <div className={styles.register_ICO}>
          <p className={styles.title_main_whitelist}>Whitelist your address and get advantage price for the following token </p>
           <div className={styles.main_whitelist}>
@@ -1393,7 +1402,7 @@ const _mint = async(_numICO) => {
           <div className={styles.main_presale}>
             {listProjects.map((project, index) => (
                   index !=0 && project.deadline.toString() < Math.round(new Date()/1000) && listIsWhitelisted[index] && (project.presaleEnded.toString() > Math.round(new Date()/1000) || project.presaleEnded.toString() == 0) ? (
-                    <div className={styles.ico_presale}>
+                    <div  key="index" className={styles.ico_presale}>
                       <p className={styles.title_ico_presale}>{project.id.toString()}-{project.name} ({project.symbol})</p>
                       <center><Image src={"/" + project.symbol + ".png"} height='64' width='64' alt="eth"/></center>
                       <p className={styles.end_ico_presale}>End Presale</p>
@@ -1405,11 +1414,12 @@ const _mint = async(_numICO) => {
                       <div><input
                             type="text"
                             id="presale_amount"
-                            className={styles.create_ico_input}
+                            className={styles.presale_input}
                             placeholder="Amount"
+                            onChange={ (e) => setPresaleAmount(e.target.value)}
                             required />
                             <br/>
-                      <center><button type="button"  className={styles.btn_buy_presale} onClick={(e) => _presaleMint(project.id.toString())}>Buy</button></center></div>
+                      <center><button type="button"  className={styles.btn_buy_presale} onClick={(e) => _presaleMint(project.id.toString(), project.tokenPrice.toString())}>Buy</button></center></div>
                     ) :  (
                       <center><button type="button" disabled className={styles.btn_soldout}>Sold Out</button></center>
                     ))}
@@ -1428,20 +1438,22 @@ const _mint = async(_numICO) => {
           <div className={styles.main_sale}>
             {listProjects.map((project, index) => (
                   index !=0 && project.presaleEnded.toString() < Math.round(new Date()/1000) && project.presaleStarted ? (
-                    <div className={styles.ico_sale}>
-                      <p className={styles.title_ico_sale}>{project.id.toString()}-{project.name} ({project.symbol})</p>
+                    <div  key="index" className={styles.ico_sale}>
+                      <p  className={styles.title_ico_sale}>{project.id.toString()}-{project.name} ({project.symbol})</p>
                       <center><Image src={"/" + project.symbol + ".png"} height='64' width='64' alt="eth"/></center>
                       <div><input
-                            type="text"
+                        key="index"
+                            type="number"
                             id="sale_amount"
-                            className={styles.presale_input}
+                            className={styles.sale_input}
                             placeholder="Amount"
+                            onChange={ (e) => setSaleAmount(e.target.value)}
                             required />
                             <br/>
                       {project.nbBuyToken.toString() != project.maxSupplyICO.toString() ? (
-                            <center><button type="button"  className={styles.btn_buy_ico} onClick={(e) => _mint(project.id.toString())}>Buy</button></center>
+                            <center><button className={styles.btn_buy_ico} onClick={(e) => _mint(project.id.toString(), project.tokenPrice.toString())}>Buy</button></center>
                           ) : (
-                            <center><button type="button"  disabled className={styles.btn_soldout}>Sold Out</button></center>
+                            <center><button disabled className={styles.btn_soldout}>Sold Out</button></center>
                           )}
                       </div>
                       <p className={styles.sold_counter}>Sold : {utils.formatEther(project.nbBuyToken)}/{utils.formatEther(project.maxSupplyICO)}</p>
@@ -1455,6 +1467,7 @@ const _mint = async(_numICO) => {
          </div>
        )
      }
+   }
 
 
     /*

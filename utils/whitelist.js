@@ -1,4 +1,4 @@
-import { Contract } from "ethers";
+import { Contract, utils } from "ethers";
 import {
   WHITELIST_CONTRACT_ABI,
   WHITELIST_CONTRACT_ADDRESS
@@ -43,7 +43,6 @@ export const fetchAllICOs = async (provider, address) => {
 }
 
 export const createICO = async (signer, _tokenAddress, _maxWhitelistAddresses, _deadline) => {
-  console.log(_tokenAddress, _maxWhitelistAddresses, _deadline)
     // Create a new instance of the whitelist contract
     const whitelistContract = new Contract(
       WHITELIST_CONTRACT_ADDRESS,
@@ -74,24 +73,37 @@ export const startPresale = async (signer, _numICO) => {
   await tx.wait();
 }
 
-export const presaleMint = async (signer, _numICO, _amount) => {
-  console.log(_numICO, _amount)
+export const presaleMint = async (signer, _numICO, _amount, _tokenPrice) => {
+  console.log(_numICO, _amount, utils.formatEther(_tokenPrice))
+  const eth = (_amount * utils.formatEther(_tokenPrice)) / 2
+  console.log(eth)
+
   const whitelistContract = new Contract(
     WHITELIST_CONTRACT_ADDRESS,
     WHITELIST_CONTRACT_ABI,
     signer);
-  const tx= await whitelistContract.presaleMint(_numICO, _amount);
+  const tx= await whitelistContract.presaleMint(_numICO, _amount, {
+        // value signifies the cost of one crypto dev which is "0.01" eth.
+        // We are parsing `0.01` string to ether using the utils library from ethers.js
+        value: utils.parseEther(eth.toString()),
+      });
 
   await tx.wait();
 }
 
-export const mint = async (signer, _numICO, _amount) => {
-  console.log(_numICO, _amount)
+export const mint = async (signer, _numICO, _amount, _tokenPrice) => {
+  console.log(_numICO, _amount, utils.formatEther(_tokenPrice))
+  const eth = _amount * utils.formatEther(_tokenPrice)
+  console.log(eth)
   const whitelistContract = new Contract(
     WHITELIST_CONTRACT_ADDRESS,
     WHITELIST_CONTRACT_ABI,
     signer);
-  const tx= await whitelistContract.mint(_numICO, _amount);
+  const tx= await whitelistContract.mint(_numICO, _amount,  {
+        // value signifies the cost of one crypto dev which is "0.01" eth.
+        // We are parsing `0.01` string to ether using the utils library from ethers.js
+        value: utils.parseEther(eth.toString()),
+      });
 
   await tx.wait();
 }
