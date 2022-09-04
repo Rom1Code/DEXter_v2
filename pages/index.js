@@ -1257,11 +1257,21 @@ const _mint = async (_numICO, _tokenPrice) => {
             <div className={styles.portfolio}>
               <p className={styles.title}>Portfolio</p>
               <input type="checkbox" onChange = { async (e)=> {setHideZeroBalance(!hideZeroBalance); await _fetchAllPools()}}/> Hide zero balance
-              <p className={styles.balance_dash}><Image src="/ETH.png" height='32' width='32' alt="eth"/> ETH : {utils.formatEther(ethBalance).substring(0,10)}</p>
+              <p className={styles.balance_dash}>
+                <span className={styles.logo_dash}>
+                  <Image src="/ETH.png" height='32' width='32' alt="eth"/>
+                </span>
+                   ETH : {utils.formatEther(ethBalance).substring(0,10)}
+              </p>
               {
                 listBalanceOfTokens.map((token, index) => (
                   (!hideZeroBalance || token != 0) && index !=0 ? (
-                    <p key={index} className={styles.balance_dash}><Image src={"/" + listPools[index-1].symbol + ".png"} height='32' width='32' alt="eth"/> {listPools[index-1].symbol} : {utils.formatEther(token).substring(0,10)}</p>
+                    <p key={index} className={styles.balance_dash}>
+                      <span className={styles.logo_dash}>
+                        <Image src={"/" + listPools[index-1].symbol + ".png"} height='32' width='32' alt="eth"/>
+                      </span>
+                      {listPools[index-1].symbol} : {utils.formatEther(token).substring(0,10)}
+                    </p>
                   )
                   :
                   (null)

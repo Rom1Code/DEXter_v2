@@ -235,6 +235,13 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
 }
 
 
+.logo_dash {
+  position: relative;
+  top:11px;
+  padding-right: 10px
+}
+
+
 
 /* POOL */
 .main_pool {
