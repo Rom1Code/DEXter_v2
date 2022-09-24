@@ -1,15 +1,16 @@
 .main {
 background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(15,27,49,1) 0%, rgba(0,112,218,1) 90% );
-  min-height:1000px;
-  max-height: inherit;
+  min-height:1200px;
+  max-height:inherit;
   justify-content: center;
-  padding-bottom: 25px
 }
+
+/*horizontal navbar*/
 .navbar {
   background-color: rgba(0,112,218,1);
   border-bottom: 1px solid white;
   font-weight: bold;
-  position: sticky;
+  position: fixed;
   top: 0;
   width:100% ;
   overflow: hidden;
@@ -17,7 +18,20 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
   padding-bottom: 10px;
   padding-top: 10px;
   z-index: 1;
+}
 
+/*vertical navbar*/
+.navbar2 {
+  padding-top: 20%;
+  width:10%;
+  height: 1200px;
+  max-height:auto;
+  overflow: hidden;
+  background-color: rgba(0,112,218,1);
+  font-weight: bold;
+  top: 0;
+  position: fixed;
+  vertical-align: middle;
 }
 
 .description {
@@ -33,31 +47,59 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
   margin-top:50px
 }
 
+/*horizontal navbar*/
 .page {
   padding-top: 40px;
 }
 
+/*vertical navbar*/
+.page2 {
+  display: inline-block;
+  width:100%;
+  height:inherit;
+  padding:50px;
+}
+
+/*horizontal navbar*/
 .btn_navbar {
   background-color: rgba(0,112,218,1);
-  margin-left: 5px;
+  margin-left: 15px;
   border: none;
   font-size: 20px;
   color: white;
   font-weight: bold;
+  padding:5px;
+  border-radius: 10px
+}
+
+/*vertical navbar*/
+.btn_navbar2 {
+  background-color: rgba(0,112,218,1);
+  margin-left: 15px;
+  border: none;
+  font-size: 20px;
+  color: white;
+  font-weight: bold;
+  padding:5px;
+  border-radius: 10px;
+  margin-bottom : 10px
 }
 
 .btn_navbar:focus {
-    box-shadow: 0 0 0 2px #FFFFFF;
-    background-color: rgba(0,112,218,1);
-    color: white;
+    background-color: white;
+    color: rgba(0,112,218,1);
     border: none;
-    border-radius: 10px
+    border-radius: 10px;
+    padding:5px;
 
   }
 .btn_navbar:hover {
   background: white;
   color: rgba(0,112,218,1);
-  border-radius: 10px
+  border-radius: 10px;
+  border: none;
+  padding:5px;
+
 }
 
 .walletAddress {
@@ -67,14 +109,52 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
 
 }
 
-.connect {
+.txt_intro {
+  text-align: center;
+  font-size: 25px;
+  color :white;
+  margin-top: 25%;
+
+}
+
+.btn_connect {
+  cursor: pointer;
+  background-color: #F1C40F;
+  margin: 5px;
+  width: 150px;
+  height: 30px;
+  border: none;
+  border-radius: 15px;
+  font-size: 16px;
+  margin-left: 100px;
+  font-weight: bold;
+}
+
+.btn_deconnect {
+  cursor: pointer;
+  background-color: #F1C40F;
+  margin: 5px;
+  width: 150px;
+  height: 30px;
+  border: none;
+  border-radius: 15px;
+  font-size: 16px;
+  margin-left: 20px;
+  font-weight: bold;
+}
+
+
+.btn_dahsboard_connect {
+  cursor: pointer;
+  width: 200px;
+  height: 35px;
   background-color: #F1C40F;
   margin: 5px;
   border: none;
-  border-radius: 10%;
+  border-radius: 10px;
   font-size: 20px;
-  margin-left: 100px
-
+  margin-top: 30px;
+  font-weight: bold;
 }
 
 .loading {
@@ -99,7 +179,6 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
   padding-top: 10px;
   padding-bottom: 10px;
   justify-content: center;
-
 }
 
 .btn_footer {
@@ -156,6 +235,7 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
   /*display:flex;
   flex-wrap: wrap;*/
   justify-content: center;
+  margin-top: 70px;
   margin-bottom: 70px;
   margin-left: 15%
 }
@@ -247,8 +327,10 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
 .main_pool {
   /*display:flex;
   flex-wrap: wrap;*/
-  width:60%
+  width:60%;
+  margin-top: 70px;
 }
+
 .pool {
   display: inline-block;
   vertical-align: top;
@@ -454,12 +536,13 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
 
 .tab_choise {
   text-align: center;
+  margin-top: 70px;
 }
 
 .create_main {
   width: 40%;
   margin-left: 30%;
-  margin-top: 100px;
+  margin-top: 50px;
   margin-bottom: 50px;
   padding-bottom: 20px;
   border-radius: 10px;
@@ -501,6 +584,7 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
   padding-bottom :15px;
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
+  margin-top: 70px;
 
 }
 
@@ -514,7 +598,6 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
 .create_prop_textarea {
   width :80%;
   margin-left: 10%
-
 }
 .create_prop_input {
   height: 25px;
@@ -671,7 +754,7 @@ background-image: radial-gradient( circle farthest-corner at 16.5% 28.1%,  rgba(
 
 .main_create_ico {
   background-image: radial-gradient(   rgba(15,27,49,1) 0%, rgba(0,112,218,1) 100% );
-  margin-top: 20px;
+  margin-top: 70px;
   width: 30%;
   margin-left: 35%;
   background-color: white;

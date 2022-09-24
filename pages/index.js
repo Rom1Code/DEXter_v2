@@ -1,4 +1,5 @@
 import { BigNumber, providers, utils } from "ethers";
+const INFURA_KEY = process.env.INFURA_KEY;
 import { Doughnut } from 'react-chartjs-2'
 import { Chart, ArcElement } from 'chart.js'
 Chart.register(ArcElement);
@@ -7,6 +8,9 @@ import Head from "next/head";
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from "react";
 import Web3Modal from "web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
+
 import styles from "../styles/Home.module.css";
 import {
   DEX_TOKEN_ADDRESS,
@@ -35,8 +39,6 @@ import { swapTokens, getAmountOfTokensReceivedFromSwap } from "../utils/swap";
 import { createProposal, voteForProposal, fetchAllProposals, getNbProposal, executeProposal } from "../utils/dao";
 import { fetchAllICOs, createICO, getNbICO, whitelist, startPresale, presaleMint, mint} from "../utils/whitelist";
 import { progressBar, timeConverter, getOwner } from "../utils/helper";
-
-
 
 export default function Home() {
 
@@ -131,6 +133,8 @@ export default function Home() {
   const [whitelistContractOwner, setWhitelistContractOwner] = useState(false);
   const [saleAmount, setSaleAmount] = useState([0]);
   const [presaleAmount, setPresaleAmount] = useState([0]);
+
+  const [provider, setProvider] = useState();
 
   /**
     * getAmounts call various functions to retrive amounts for ethbalance,
@@ -684,9 +688,6 @@ const _mint = async (_numICO, _tokenPrice) => {
 }
 
 
-
-
-
   /*** END ***/
 
  /**
@@ -694,14 +695,47 @@ const _mint = async (_numICO, _tokenPrice) => {
    */
    const connectWallet = async () => {
       try {
+        setLoading(true)
+        await getProviderOrSigner(true)
+        _getNbProposal();
+        _getNbPool();
+        _fetchAllPools();
+        _fetchAllProposals();
+        getAmounts();
+        _getOwners();
+
         // Get the provider from web3Modal, which in our case is MetaMask
         // When used for the first time, it prompts the user to connect their wallet
-        await getProviderOrSigner(true);
         setWalletConnected(true);
+        setLoading(false)
+
       } catch (err) {
         console.error(err);
       }
     };
+
+    const deconnectWallet = async () => {
+      setLoading(true)
+
+      await web3ModalRef.current.clearCachedProvider();
+      setWalletConnected(false);
+      setWalletAddress()
+      setEtherBalance(zero)
+      setDexBalance(zero)
+      setListProposals([])
+      setNbProposal([0])
+      setListHasVoted([])
+      setListPools([])
+      setNbPool([0])
+      setListPoolsWithLP([])
+      setListBalanceOfTokens([])
+      setListProjects([])
+      setNbProject([0])
+      setListIsWhitelisted([])
+      setWhitelistContractOwner()
+      setLoading(false)
+
+    }
 
     // Helper function to fetch a Provider/Signer instance from Metamask
     const getProviderOrSigner = async (needSigner = false) => {
@@ -709,6 +743,7 @@ const _mint = async (_numICO, _tokenPrice) => {
       // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
       const provider = await web3ModalRef.current.connect();
       const web3Provider = new providers.Web3Provider(provider);
+      setProvider(provider);
 
       // If user is not connected to the Rinkeby network, let them know and throw an error
       const { chainId } = await web3Provider.getNetwork();
@@ -721,6 +756,7 @@ const _mint = async (_numICO, _tokenPrice) => {
       if (needSigner) {
         const signer = web3Provider.getSigner();
         const signerAddress = await signer.getAddress();
+        console.log("signerAddress",signerAddress)
         setWalletAddress(signerAddress)
         return signer;
       }
@@ -731,7 +767,7 @@ const _mint = async (_numICO, _tokenPrice) => {
     const renderButtonConnect = () => {
       if(!walletConnected){
         return (<button
-                    className={styles.connect}
+                    className={styles.btn_connect}
                     type="button"
                     onClick={connectWallet}
                   >
@@ -740,7 +776,15 @@ const _mint = async (_numICO, _tokenPrice) => {
                 );
       }
       else {
-        return (  <span className={styles.walletAddress}>{walletAddress}</span>
+        return (  <span className={styles.walletAddress}>{walletAddress}<button
+                    className={styles.btn_deconnect}
+                    type="button"
+                    onClick={deconnectWallet}
+                  >
+                    Deconnect
+                  </button>
+
+                </span>
         );
       }
     };
@@ -1321,12 +1365,17 @@ const _mint = async (_numICO, _tokenPrice) => {
       }
       else {
         return (
-          <div className={styles.recap}>
-            <div className={styles.portfolio}>
-              <p className={styles.title}>Portfolio</p>
-              <p className={styles.balance_dash}><Image src="/ETH.png" height='32' width='32' alt="eth"/> ETH : {utils.formatEther(ethBalance).substring(0,10)}</p>
-            </div>
-          </div>
+          <div>
+          <center><p className={styles.txt_intro}>Start your decentralize journey by connection your wallet</p></center>
+          <center><Image src="/Money transfer _Monochromatic.png" height='200' width='200' alt="wallet"/></center>
+          <center><button
+                      className={styles.btn_dahsboard_connect}
+                      type="button"
+                      onClick={connectWallet}
+                    >
+                      Connect Wallet
+                    </button></center>
+                    </div>
         )
       }
     }
@@ -1484,7 +1533,14 @@ const _mint = async (_numICO, _tokenPrice) => {
      *renderPage: Returns a button based on the state of the dapp
      */
     const renderPage =  () => {
-      if(currentPage=="Dashboard"){
+      if(loading){
+        return (
+          <div className={styles.loading}>
+            Loading blockchain informations ...
+          </div>
+        );
+      }
+      else if(currentPage=="Dashboard"){
         return (
           renderDashBoard_v2());
       }
@@ -1504,41 +1560,47 @@ const _mint = async (_numICO, _tokenPrice) => {
     }
 
 
-  // useEffects are used to react to changes in state of the website
-  // The array at the end of function call represents what state changes will trigger this effect
-  // In this case, whenever the value of `walletConnected` changes - this effect will be called
-  useEffect(() => {
-    // if wallet is not connected, create a new instance of Web3Modal and connect the MetaMask wallet
-    if (!walletConnected) {
-      // Assign the Web3Modal class to the reference object by setting it's `current` value
-      // The `current` value is persisted throughout as long as this page is open
-      web3ModalRef.current = new Web3Modal({
-        network: "rinkeby",
-        providerOptions: {},
-        disableInjectedProvider: false,
-      });
-      connectWallet();
-      _getNbProposal();
-      _getNbPool();
-      _fetchAllPools();
-      _fetchAllProposals();
-      getAmounts();
-      _getOwners();
-    }
 
-  }, [walletConnected]);
+// useEffects are used to react to changes in state of the website
+ // The array at the end of function call represents what state changes will trigger this effect
+ // In this case, whenever the value of `walletConnected` changes - this effect will be called
+useEffect(() => {
+   // if wallet is not connected, create a new instance of Web3Modal and connect the MetaMask wallet
+     // Assign the Web3Modal class to the reference object by setting it's `current` value
+     // The `current` value is persisted throughout as long as this page is open
+     if (!walletConnected) {
+     console.log("useeffectr",walletAddress)
+     web3ModalRef.current = new Web3Modal({
+       network: "rinkeby",
+       cacheProvider: true, // optional
+       providerOptions: {
+         walletconnect: {
+           package: WalletConnectProvider,
+           options: {
+             infuraId: INFURA_KEY,
+           }
+         },
+         coinbasewallet: {
+             package: CoinbaseWalletSDK,
+             options: {
+               infuraId: INFURA_KEY,
+             }
+           },
+       },
+       disableInjectedProvider: false,
+     });
+   }
+ }, [] );
+
+
+
+
 
   // set an interval to get the number of token Ids minted every 5 seconds
 
   // Piece of code that runs everytime the value of `currentPage` changes
   // Used to re-fetch all proposals in the DAO when user switches
   // to the 'DAO' tab
-  useEffect(() => {
-    if (currentPage==="Gouvernance") {
-      _fetchAllProposals();
-    }
-  }, [currentPage]);
-
   // Used to re-fetch all proposals in the DAO when user switches
   // to the 'Pool' tab
   useEffect(() => {
@@ -1546,14 +1608,16 @@ const _mint = async (_numICO, _tokenPrice) => {
       _getNbPool();
       _fetchAllPools();
     }
-  }, [currentPage]);
-
-  useEffect(() => {
-    if (currentPage==="ICO") {
+    else if (currentPage==="ICO") {
       _getNbICOs();
       _fetchAllICOs();
     }
+    else if (currentPage==="Gouvernance") {
+      _fetchAllProposals();
+    }
+
   }, [currentPage]);
+
 
   return (
     <div>
@@ -1564,11 +1628,11 @@ const _mint = async (_numICO, _tokenPrice) => {
       </Head>
   <div className={styles.main}>
     <div className={styles.navbar}>
-        <button className={styles.btn_navbar}onClick={(event) => {setCurrentPage("Dashboard")}}>Dashboard</button>
-        <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Swap")}}>Swap</button>
-        <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Pool")}}>Pool</button>
-        <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Gouvernance")}}>DAO</button>
-        <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("ICO")}}>ICO</button>
+        <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Dashboard")}}><Image src="/wallet.png" height='20' width='20' alt="wallet"/> Dashboard</button>
+        <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Swap")}}><Image src="/switch.png" height='20' width='20' alt="switch"/> Swap</button>
+        <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Pool")}}><Image src="/pool.png" height='20' width='20' alt="pool"/> Pool</button>
+        <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Gouvernance")}}><Image src="/dao.png" height='20' width='20' alt="dao"/> DAO</button>
+        <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("ICO")}}><Image src="/ico.png" height='20' width='20' alt="ico"/> ICO</button>
         <a href="https://rinkebyfaucet.com/" target="_blank" rel="noreferrer"><button className={styles.btn_navbar}>Faucet</button></a>
 
         {renderButtonConnect()}
