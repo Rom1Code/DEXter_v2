@@ -134,7 +134,8 @@ export default function Home() {
   const [saleAmount, setSaleAmount] = useState([0]);
   const [presaleAmount, setPresaleAmount] = useState([0]);
 
-  const [provider, setProvider] = useState();
+  const [network, setNetwork] = useState();
+  const [chainId, setChainId] = useState();
 
   /**
     * getAmounts call various functions to retrive amounts for ethbalance,
@@ -733,6 +734,8 @@ const _mint = async (_numICO, _tokenPrice) => {
       setNbProject([0])
       setListIsWhitelisted([])
       setWhitelistContractOwner()
+      setNetwork()
+      setChainId()
       setLoading(false)
 
     }
@@ -743,10 +746,11 @@ const _mint = async (_numICO, _tokenPrice) => {
       // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
       const provider = await web3ModalRef.current.connect();
       const web3Provider = new providers.Web3Provider(provider);
-      setProvider(provider);
 
       // If user is not connected to the Rinkeby network, let them know and throw an error
-      const { chainId } = await web3Provider.getNetwork();
+      const { name, chainId } = await web3Provider.getNetwork();
+      setNetwork(name);
+      setChainId(chainId);
 
       if (chainId !== 4) {
         window.alert("Change the network to Rinkeby");
@@ -765,6 +769,7 @@ const _mint = async (_numICO, _tokenPrice) => {
 
     // render the connect button
     const renderButtonConnect = () => {
+      console.log("network",network)
       if(!walletConnected){
         return (<button
                     className={styles.btn_connect}
@@ -776,15 +781,17 @@ const _mint = async (_numICO, _tokenPrice) => {
                 );
       }
       else {
-        return (  <span className={styles.walletAddress}>{walletAddress}<button
+        return (  <button
                     className={styles.btn_deconnect}
                     type="button"
                     onClick={deconnectWallet}
                   >
-                    Deconnect
+                    Deconnect ..{walletAddress.substring(37)}
+
                   </button>
 
-                </span>
+
+
         );
       }
     };
@@ -1634,8 +1641,9 @@ useEffect(() => {
         <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("Gouvernance")}}><Image src="/dao.png" height='20' width='20' alt="dao"/> DAO</button>
         <button className={styles.btn_navbar} onClick={(event) => {setCurrentPage("ICO")}}><Image src="/ico.png" height='20' width='20' alt="ico"/> ICO</button>
         <a href="https://rinkebyfaucet.com/" target="_blank" rel="noreferrer"><button className={styles.btn_navbar}>Faucet</button></a>
-
         {renderButtonConnect()}
+      <label className ={styles.lbl_network}>  network :</label> <label className ={styles.txt_network}>{network}</label>
+      <label className ={styles.lbl_network}>  chainId :</label> <label className ={styles.txt_network}>{chainId}</label>
     </div>
     <div className={styles.page}>
      {renderPage()}
